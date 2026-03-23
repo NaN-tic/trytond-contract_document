@@ -1,0 +1,351 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:contract,cadastre:"
+msgid "Cadastre"
+msgstr "Cadastre"
+
+msgctxt "field:contract,document_attribute_set:"
+msgid "Document Attribute Set"
+msgstr "Conjunt d'atributs del document"
+
+msgctxt "field:contract,document_attributes:"
+msgid "Document Attributes"
+msgstr "Atributs del document"
+
+msgctxt "field:contract.document.appearance,active:"
+msgid "Active"
+msgstr "Actiu"
+
+msgctxt "field:contract.document.appearance,content:"
+msgid "Content"
+msgstr "Contingut"
+
+msgctxt "field:contract.document.appearance,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:contract.document.appearance,title:"
+msgid "Title"
+msgstr "Títol"
+
+msgctxt "field:contract.document.base,clauses:"
+msgid "Clauses"
+msgstr "Clàusules"
+
+msgctxt "field:contract.document.base,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:contract.document.base.clause,base:"
+msgid "Base"
+msgstr "Base"
+
+msgctxt "field:contract.document.base.clause,clause:"
+msgid "Clause"
+msgstr "Clàusula"
+
+msgctxt "field:contract.document.clause,active:"
+msgid "Active"
+msgstr "Actiu"
+
+msgctxt "field:contract.document.clause,children:"
+msgid "Children"
+msgstr "Fills"
+
+msgctxt "field:contract.document.clause,content:"
+msgid "Content"
+msgstr "Contingut"
+
+msgctxt "field:contract.document.clause,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:contract.document.clause,parent:"
+msgid "Parent"
+msgstr "Pare"
+
+msgctxt "field:contract.document.clause,title:"
+msgid "Title"
+msgstr "Títol"
+
+msgctxt "field:contract.document.manifest,active:"
+msgid "Active"
+msgstr "Actiu"
+
+msgctxt "field:contract.document.manifest,content:"
+msgid "Content"
+msgstr "Contingut"
+
+msgctxt "field:contract.document.manifest,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:contract.document.manifest,title:"
+msgid "Title"
+msgstr "Títol"
+
+msgctxt "field:contract.document.party,active:"
+msgid "Active"
+msgstr "Actiu"
+
+msgctxt "field:contract.document.party,content:"
+msgid "Content"
+msgstr "Contingut"
+
+msgctxt "field:contract.document.party,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:contract.document.party,title:"
+msgid "Title"
+msgstr "Títol"
+
+msgctxt "field:contract.generate.start,amount:"
+msgid "Amount"
+msgstr "Import"
+
+msgctxt "field:contract.generate.start,appearances:"
+msgid "Appearances"
+msgstr "Intervenen"
+
+msgctxt "field:contract.generate.start,appearances_title:"
+msgid "Appearances Title"
+msgstr "Títol d'Intervenen"
+
+msgctxt "field:contract.generate.start,asset:"
+msgid "Asset"
+msgstr "Actiu"
+
+msgctxt "field:contract.generate.start,attachments:"
+msgid "Attachments"
+msgstr "Adjunts"
+
+msgctxt "field:contract.generate.start,attribute_set:"
+msgid "Attribute Set"
+msgstr "Conjunt d'atributs"
+
+msgctxt "field:contract.generate.start,attributes:"
+msgid "Attributes"
+msgstr "Atributs"
+
+msgctxt "field:contract.generate.start,cadastre:"
+msgid "Cadastre"
+msgstr "Cadastre"
+
+msgctxt "field:contract.generate.start,certificate:"
+msgid "Certificate"
+msgstr "Certificat"
+
+msgctxt "field:contract.generate.start,clauses:"
+msgid "Clauses"
+msgstr "Clàusules"
+
+msgctxt "field:contract.generate.start,clauses_title:"
+msgid "Clauses Title"
+msgstr "Títol de clàusules"
+
+msgctxt "field:contract.generate.start,company:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "field:contract.generate.start,contract_base:"
+msgid "Contract Base"
+msgstr "Contracte base"
+
+msgctxt "field:contract.generate.start,lessor_company:"
+msgid "Lessor Company"
+msgstr "Empresa arrendadora"
+
+msgctxt "field:contract.generate.start,lessor_contact:"
+msgid "Lessor Contact"
+msgstr "Contacte arrendador"
+
+msgctxt "field:contract.generate.start,lessee_company:"
+msgid "Lessee Company"
+msgstr "Empresa arrendatària"
+
+msgctxt "field:contract.generate.start,lessee_contacts:"
+msgid "Lessee Contacts"
+msgstr "Contactes arrendataris"
+
+msgctxt "field:contract.generate.start,origin:"
+msgid "Origin"
+msgstr "Origen"
+
+msgctxt "field:contract.generate.start,origin_attachments:"
+msgid "Contract Attachments"
+msgstr "Adjunts del contracte"
+
+msgctxt "field:contract.generate.start,parties:"
+msgid "Parties"
+msgstr "Reunits"
+
+msgctxt "field:contract.generate.start,parties_title:"
+msgid "Parties Title"
+msgstr "Títol de reunits"
+
+msgctxt "field:contract.generate.start,sign_digitally:"
+msgid "Sign Digitally"
+msgstr "Signar digitalment"
+
+msgctxt "field:contract.generate.start,statements:"
+msgid "Statements"
+msgstr "Manifestacions"
+
+msgctxt "field:contract.generate.start,statements_title:"
+msgid "Statements Title"
+msgstr "Títol de manifestacions"
+
+msgctxt "field:contract.generate.start.appearance,appearance:"
+msgid "Appearance Text"
+msgstr "Text d'intervenció"
+
+msgctxt "field:contract.generate.start.appearance,content:"
+msgid "Content"
+msgstr "Contingut"
+
+msgctxt "field:contract.generate.start.appearance,sequence:"
+msgid "Sequence"
+msgstr "Seqüència"
+
+msgctxt "field:contract.generate.start.appearance,title:"
+msgid "Title"
+msgstr "Títol"
+
+msgctxt "field:contract.generate.start.attachment,data:"
+msgid "Data"
+msgstr "Dades"
+
+msgctxt "field:contract.generate.start.attachment,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:contract.generate.start.attachment,sequence:"
+msgid "Sequence"
+msgstr "Seqüència"
+
+msgctxt "field:contract.generate.start.clause,clause:"
+msgid "Clause"
+msgstr "Clàusula"
+
+msgctxt "field:contract.generate.start.clause,sequence:"
+msgid "Sequence"
+msgstr "Seqüència"
+
+msgctxt "field:contract.generate.start.clause,title:"
+msgid "Title"
+msgstr "Títol"
+
+msgctxt "field:contract.generate.start.party,content:"
+msgid "Content"
+msgstr "Contingut"
+
+msgctxt "field:contract.generate.start.party,party:"
+msgid "Party Text"
+msgstr "Text de reunits"
+
+msgctxt "field:contract.generate.start.party,sequence:"
+msgid "Sequence"
+msgstr "Seqüència"
+
+msgctxt "field:contract.generate.start.party,title:"
+msgid "Title"
+msgstr "Títol"
+
+msgctxt "field:contract.generate.start.statement,content:"
+msgid "Content"
+msgstr "Contingut"
+
+msgctxt "field:contract.generate.start.statement,sequence:"
+msgid "Sequence"
+msgstr "Seqüència"
+
+msgctxt "field:contract.generate.start.statement,statement:"
+msgid "Statement"
+msgstr "Manifestació"
+
+msgctxt "field:contract.generate.start.statement,title:"
+msgid "Title"
+msgstr "Títol"
+
+msgctxt "help:contract.document.appearance,content:"
+msgid "Supports Jinja2 placeholders like {{ lessor_company }} or {{ asset_address }}."
+msgstr "Admet placeholders de Jinja2 com {{ lessor_company }} o {{ asset_address }}."
+
+msgctxt "help:contract.document.clause,content:"
+msgid "Supports Jinja2 placeholders like {{ contract_number }} or {{ asset_name }}."
+msgstr "Admet placeholders de Jinja2 com {{ contract_number }} o {{ asset_name }}."
+
+msgctxt "help:contract.document.manifest,content:"
+msgid "Supports Jinja2 placeholders like {{ lessor_company }} or {{ asset_address }}."
+msgstr "Admet placeholders de Jinja2 com {{ lessor_company }} o {{ asset_address }}."
+
+msgctxt "help:contract.document.party,content:"
+msgid "Supports Jinja2 placeholders like {{ lessor_company }} or {{ asset_address }}."
+msgstr "Admet placeholders de Jinja2 com {{ lessor_company }} o {{ asset_address }}."
+
+msgctxt "model:ir.action,name:act_contract_appearance"
+msgid "Appearances Texts"
+msgstr "Texts d'intervencions"
+
+msgctxt "model:ir.action,name:act_contract_base"
+msgid "Base Contracts"
+msgstr "Contractes base"
+
+msgctxt "model:ir.action,name:act_contract_clause"
+msgid "Clauses"
+msgstr "Clàusules"
+
+msgctxt "model:ir.action,name:act_contract_manifest"
+msgid "Statements"
+msgstr "Manifestacions"
+
+msgctxt "model:ir.action,name:act_contract_party"
+msgid "Parties Texts"
+msgstr "Texts de reunits"
+
+msgctxt "model:ir.message,text:msg_missing_active_contract"
+msgid "No active contract was found to generate the document."
+msgstr "No s'ha trobat cap contracte actiu per generar el document."
+
+msgctxt "model:ir.message,text:msg_missing_clauses"
+msgid "At least one clause is required to generate the contract document."
+msgstr "Cal almenys una clàusula per generar el document del contracte."
+
+msgctxt "model:ir.message,text:msg_missing_pyhanko"
+msgid "Digital signing requires the Python package \"pyhanko\" to be installed on the server."
+msgstr "La signatura digital requereix que el paquet Python \"pyhanko\" estigui instal·lat al servidor."
+
+msgctxt "model:ir.message,text:msg_missing_soffice"
+msgid "PDF generation requires the \"soffice\" executable to be available on the server."
+msgstr "La generació de PDF requereix que l'executable \"soffice\" estigui disponible al servidor."
+
+msgctxt "model:ir.message,text:msg_single_contract"
+msgid "You can only generate one contract document at a time."
+msgstr "Només es pot generar un document de contracte cada vegada."
+
+msgctxt "model:ir.ui.menu,name:menu_contract_appearance"
+msgid "Appearances Texts"
+msgstr "Texts d'intervencions"
+
+msgctxt "model:ir.ui.menu,name:menu_contract_base"
+msgid "Base Contracts"
+msgstr "Contractes base"
+
+msgctxt "model:ir.ui.menu,name:menu_contract_clause"
+msgid "Clauses"
+msgstr "Clàusules"
+
+msgctxt "model:ir.ui.menu,name:menu_contract_document"
+msgid "Document"
+msgstr "Document"
+
+msgctxt "model:ir.ui.menu,name:menu_contract_manifest"
+msgid "Statements"
+msgstr "Manifestacions"
+
+msgctxt "model:ir.ui.menu,name:menu_contract_party"
+msgid "Parties Texts"
+msgstr "Texts de reunits"

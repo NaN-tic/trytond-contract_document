@@ -1,0 +1,6 @@
+<tree sequence="sequence" editable="1">
+    <field name="sequence"/>
+    <field name="appearance"/>
+    <field name="title"/>
+    <field name="content"/>
+</tree>

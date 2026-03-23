@@ -1,0 +1,56 @@
+<form col="4">
+    <field name="company" invisible="1" colspan="4"/>
+    <field name="origin" invisible="1" colspan="4"/>
+    <notebook colspan="4">
+        <page string="General" id="general">
+            <label name="lessor_company"/>
+            <field name="lessor_company"/>
+            <label name="lessor_contact"/>
+            <field name="lessor_contact"/>
+            <label name="lessee_company"/>
+            <field name="lessee_company"/>
+            <field name="lessee_contacts" colspan="2"/>
+            <newline/>
+            <label name="asset"/>
+            <field name="asset"/>
+            <label name="amount"/>
+            <field name="amount"/>
+            <label name="cadastre"/>
+            <field name="cadastre"/>
+            <field name="attribute_set" invisible="1" colspan="4"/>
+            <label name="attributes"/>
+            <field name="attributes" colspan="3"/>
+            <newline/>
+            <label name="sign_digitally"/>
+            <field name="sign_digitally"/>
+            <label name="certificate"/>
+            <field name="certificate"/>
+        </page>
+        <page string="Parties" id="parties">
+            <label name="parties_title"/>
+            <field name="parties_title" colspan="3"/>
+            <field name="parties" colspan="4"/>
+        </page>
+        <page string="Appearances" id="appearances">
+            <label name="appearances_title"/>
+            <field name="appearances_title" colspan="3"/>
+            <field name="appearances" colspan="4"/>
+        </page>
+        <page string="Statements" id="statements">
+            <label name="statements_title"/>
+            <field name="statements_title" colspan="3"/>
+            <field name="statements" colspan="4"/>
+        </page>
+        <page string="Clauses" id="clauses">
+            <label name="clauses_title"/>
+            <field name="clauses_title" colspan="3"/>
+            <label name="contract_base"/>
+            <field name="contract_base" colspan="3"/>
+            <field name="clauses" colspan="4"/>
+        </page>
+        <page string="Attachments" id="attachments_page">
+            <field name="attachments" colspan="4"/>
+            <field name="origin_attachments" colspan="4"/>
+        </page>
+    </notebook>
+</form>

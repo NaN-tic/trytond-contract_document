@@ -1,0 +1,15 @@
+<form col="4">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="title"/>
+    <field name="title"/>
+    <label name="parent"/>
+    <field name="parent"/>
+    <label name="sequence"/>
+    <field name="sequence"/>
+    <label name="active"/>
+    <field name="active"/>
+    <label name="content"/>
+    <field name="content" colspan="3"/>
+    <field name="children" colspan="4"/>
+</form>

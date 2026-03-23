@@ -1,0 +1,12 @@
+<form col="4">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="title"/>
+    <field name="title"/>
+    <label name="sequence"/>
+    <field name="sequence"/>
+    <label name="active"/>
+    <field name="active"/>
+    <label name="content"/>
+    <field name="content" colspan="3"/>
+</form>

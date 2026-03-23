@@ -1,0 +1,8 @@
+<form col="4">
+    <label name="clause"/>
+    <field name="clause"/>
+    <label name="title"/>
+    <field name="title"/>
+    <label name="sequence"/>
+    <field name="sequence"/>
+</form>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tryton>
+    <data>
+        <record model="ir.message" id="msg_single_contract">
+            <field name="text">You can only generate one contract document at a time.</field>
+        </record>
+        <record model="ir.message" id="msg_missing_active_contract">
+            <field name="text">No active contract was found to generate the document.</field>
+        </record>
+        <record model="ir.message" id="msg_missing_clauses">
+            <field name="text">At least one clause is required to generate the contract document.</field>
+        </record>
+        <record model="ir.message" id="msg_missing_pyhanko">
+            <field name="text">Digital signing requires the Python package "pyhanko" to be installed on the server.</field>
+        </record>
+        <record model="ir.message" id="msg_missing_soffice">
+            <field name="text">PDF generation requires the "soffice" executable to be available on the server.</field>
+        </record>
+    </data>
+</tryton>

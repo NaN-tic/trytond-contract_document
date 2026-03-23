@@ -1,0 +1,5 @@
+<form col="4">
+    <label name="name"/>
+    <field name="name" colspan="3"/>
+    <field name="clauses" colspan="4" mode="tree,form"/>
+</form>

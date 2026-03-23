@@ -1,0 +1,6 @@
+<form col="4">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="data"/>
+    <field name="data"/>
+</form>

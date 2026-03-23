@@ -1,0 +1,6 @@
+# Required by contract_document
+docxtpl
+jinja2
+markdown
+markitdown[docx]
+python-docx

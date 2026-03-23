@@ -1,0 +1,6 @@
+<tree sequence="sequence">
+    <field name="sequence"/>
+    <field name="name"/>
+    <field name="title"/>
+    <field name="active"/>
+</tree>

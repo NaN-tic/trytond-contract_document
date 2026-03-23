@@ -1,0 +1,8 @@
+<form col="4">
+    <label name="party"/>
+    <field name="party"/>
+    <label name="title"/>
+    <field name="title"/>
+    <label name="content"/>
+    <field name="content" colspan="3"/>
+</form>

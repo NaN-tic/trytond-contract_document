@@ -1,0 +1,13 @@
+<data>
+    <xpath expr="/form/notebook" position="inside">
+        <page string="Document" id="document">
+            <label name="cadastre"/>
+            <field name="cadastre"/>
+            <label name="document_attribute_set"/>
+            <field name="document_attribute_set"/>
+            <separator id="document_attributes" string="Attributes"
+                colspan="4"/>
+            <field name="document_attributes" colspan="4"/>
+        </page>
+    </xpath>
+</data>
