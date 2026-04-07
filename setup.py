@@ -15,6 +15,7 @@ MODULE2PREFIX = {
     'asset_attribute': 'nantic',
     'asset_contract': 'nantic',
     'certificate_manager': 'nantic',
+    'contract_payment_type': 'nantic',
     'electronic_mail_wizard': 'nantic',
 }
 
