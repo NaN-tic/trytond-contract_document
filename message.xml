@@ -16,5 +16,20 @@
         <record model="ir.message" id="msg_missing_soffice">
             <field name="text">PDF generation requires the "soffice" executable to be available on the server.</field>
         </record>
+        <record model="ir.message" id="msg_default_contract_title">
+            <field name="text">CONTRACT %(contract)s</field>
+        </record>
+        <record model="ir.message" id="msg_default_parties_title">
+            <field name="text">PARTIES</field>
+        </record>
+        <record model="ir.message" id="msg_default_appearances_title">
+            <field name="text">APPEARANCES</field>
+        </record>
+        <record model="ir.message" id="msg_default_statements_title">
+            <field name="text">STATEMENTS</field>
+        </record>
+        <record model="ir.message" id="msg_default_clauses_title">
+            <field name="text">CLAUSES</field>
+        </record>
     </data>
 </tryton>

@@ -3,20 +3,41 @@
     <field name="origin" invisible="1" colspan="4"/>
     <notebook colspan="4">
         <page string="General" id="general">
+            <label name="contract_title"/>
+            <field name="contract_title" colspan="3"/>
             <label name="lessor_company"/>
             <field name="lessor_company"/>
             <label name="lessor_contact"/>
             <field name="lessor_contact"/>
+            <label name="payment_type"/>
+            <field name="payment_type"/>
+            <label name="bank_account"/>
+            <field name="bank_account"/>
             <label name="lessee_company"/>
             <field name="lessee_company"/>
             <field name="lessee_contacts" colspan="2"/>
             <newline/>
+            <label name="start_date"/>
+            <field name="start_date"/>
+            <label name="end_date"/>
+            <field name="end_date"/>
+            <label name="contract_years"/>
+            <field name="contract_years"/>
+            <newline/>
             <label name="asset"/>
             <field name="asset"/>
+            <label name="deposit"/>
+            <field name="deposit"/>
+            <label name="guarantee_amount"/>
+            <field name="guarantee_amount"/>
             <label name="amount"/>
             <field name="amount"/>
             <label name="cadastre"/>
             <field name="cadastre"/>
+            <label name="home_assessment"/>
+            <field name="home_assessment"/>
+            <label name="energy_certificate"/>
+            <field name="energy_certificate"/>
             <field name="attribute_set" invisible="1" colspan="4"/>
             <label name="attributes"/>
             <field name="attributes" colspan="3"/>

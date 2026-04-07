@@ -1,5 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
+from decimal import ROUND_HALF_UP
 from decimal import Decimal
 from io import BytesIO
 from datetime import datetime
@@ -42,7 +43,7 @@ class ContractClause(
     'Contract Clause'
     __name__ = 'contract.document.clause'
 
-    name = fields.Char('Name', required=True, translate=True)
+    name = fields.Char('Name', required=True)
     title = fields.Char('Title', translate=True)
     parent = fields.Many2One('contract.document.clause', 'Parent',
         ondelete='CASCADE', domain=[
@@ -68,7 +69,7 @@ class ContractBase(ModelSQL, ModelView):
     'Contract Base'
     __name__ = 'contract.document.base'
 
-    name = fields.Char('Name', required=True, translate=True)
+    name = fields.Char('Name', required=True)
     clauses = fields.One2Many('contract.document.base.clause', 'base',
         'Clauses')
 
@@ -89,7 +90,7 @@ class ContractManifest(sequence_ordered(), ModelSQL, ModelView):
     'Contract Manifest'
     __name__ = 'contract.document.manifest'
 
-    name = fields.Char('Name', required=True, translate=True)
+    name = fields.Char('Name', required=True)
     title = fields.Char('Title', translate=True)
     content = fields.Text('Content', translate=True,
         help='Supports Jinja2 placeholders like {{ lessor_company }} '
@@ -105,7 +106,7 @@ class ContractParty(sequence_ordered(), ModelSQL, ModelView):
     'Contract Party Text'
     __name__ = 'contract.document.party'
 
-    name = fields.Char('Name', required=True, translate=True)
+    name = fields.Char('Name', required=True)
     title = fields.Char('Title', translate=True)
     content = fields.Text('Content', translate=True,
         help='Supports Jinja2 placeholders like {{ lessor_company }} '
@@ -151,7 +152,7 @@ class ContractGenerateClause(ModelView):
         except AttributeError:
             title = None
         if self.clause and not title:
-            self.title = self.clause.title or self.clause.name
+            self.title = self.clause.title
 
 
 class ContractGenerateStatement(ModelView):
@@ -254,6 +255,7 @@ class ContractGenerateStart(ModelView):
     contract_base = fields.Many2One('contract.document.base', 'Contract Base')
     clauses = fields.One2Many('contract.generate.start.clause', None,
         'Clauses')
+    contract_title = fields.Char('Contract Title')
     parties_title = fields.Char('Parties Title')
     parties = fields.One2Many('contract.generate.start.party', None,
         'Parties')
@@ -272,6 +274,11 @@ class ContractGenerateStart(ModelView):
         context={
             'company': Eval('company', -1),
             }, depends=['company'])
+    payment_type = fields.Many2One('account.payment.type', 'Payment Type',
+        domain=[
+            ('kind', 'in', ['both', 'receivable']),
+            ])
+    bank_account = fields.Many2One('bank.account', 'Bank Account')
     lessee_company = fields.Many2One('party.party', 'Lessee Company',
         context={
             'company': Eval('company', -1),
@@ -280,11 +287,19 @@ class ContractGenerateStart(ModelView):
         'Lessee Contacts', context={
             'company': Eval('company', -1),
             }, depends=['company'])
+    start_date = fields.Date('Start Date')
+    end_date = fields.Date('End Date')
+    contract_years = fields.Function(fields.Numeric('Contract Years',
+            digits=(16, 2)), 'on_change_with_contract_years')
     asset = fields.Many2One('asset', 'Asset', context={
             'company': Eval('company', -1),
             }, depends=['company'])
+    deposit = fields.Numeric('Deposit', digits=(16, 2))
+    guarantee_amount = fields.Numeric('Guarantee Amount', digits=(16, 2))
     amount = fields.Numeric('Amount', digits=(16, 2))
     cadastre = fields.Char('Cadastre')
+    home_assessment = fields.Char('Home Assessment')
+    energy_certificate = fields.Char('Energy Certificate')
     attribute_set = fields.Many2One('asset.attribute.set', 'Attribute Set')
     attributes = fields.Dict('asset.attribute', 'Attributes', domain=[
             ('sets', '=', Eval('attribute_set', -1)),
@@ -310,19 +325,19 @@ class ContractGenerateStart(ModelView):
 
     @staticmethod
     def default_parties_title():
-        return 'PARTIES'
+        return gettext('contract_document.msg_default_parties_title')
 
     @staticmethod
     def default_appearances_title():
-        return 'APPEARANCES'
+        return gettext('contract_document.msg_default_appearances_title')
 
     @staticmethod
     def default_statements_title():
-        return 'STATEMENTS'
+        return gettext('contract_document.msg_default_statements_title')
 
     @staticmethod
     def default_clauses_title():
-        return 'CLAUSES'
+        return gettext('contract_document.msg_default_clauses_title')
 
     @fields.depends('contract_base', 'clauses')
     def on_change_contract_base(self):
@@ -337,11 +352,12 @@ class ContractGenerateStart(ModelView):
             clause_line = ClauseLine()
             clause_line.sequence = index
             clause_line.clause = line.clause
-            clause_line.title = line.clause.title or line.clause.name
+            clause_line.title = line.clause.title
             clauses.append(clause_line)
         self.clauses = clauses
 
-    @fields.depends('asset', 'cadastre', 'attribute_set', 'attributes')
+    @fields.depends('asset', 'cadastre', 'home_assessment',
+        'energy_certificate', 'attribute_set', 'attributes')
     def on_change_asset(self):
         if not self.asset:
             return
@@ -349,10 +365,25 @@ class ContractGenerateStart(ModelView):
             self.cadastre = (getattr(self.asset, 'land_register', None)
                 or getattr(self.asset, 'home_assessment', None)
                 or '')
+        if not self.home_assessment:
+            self.home_assessment = getattr(self.asset, 'home_assessment', '')
+        if not self.energy_certificate:
+            self.energy_certificate = getattr(self.asset,
+                'energy_certificate', '')
         if not self.attribute_set and getattr(self.asset, 'attribute_set', None):
             self.attribute_set = self.asset.attribute_set
         if not self.attributes and getattr(self.asset, 'attributes', None):
             self.attributes = dict(self.asset.attributes)
+
+    @fields.depends('start_date', 'end_date')
+    def on_change_with_contract_years(self, name=None):
+        if not self.start_date or not self.end_date:
+            return None
+        days = (self.end_date - self.start_date).days
+        if days <= 0:
+            return Decimal('0.00')
+        years = Decimal(days) / Decimal('365')
+        return years.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
 
 class ContractGenerateWizard(Wizard):
@@ -382,18 +413,32 @@ class ContractGenerateWizard(Wizard):
                 attribute_set = getattr(asset, 'attribute_set', None)
             if not attributes and getattr(asset, 'attributes', None):
                 attributes = dict(asset.attributes)
+        contract_title = self._default_contract_title(contract)
         return {
             'company': contract.company.id if contract.company else None,
             'origin': str(contract),
+            'contract_title': contract_title,
             'parties': self._default_parties(),
             'appearances': self._default_appearances(),
             'lessor_company': lessor.id if lessor else None,
             'lessor_contact': lessor.id if lessor else None,
+            'payment_type': (contract.payment_type.id
+                if getattr(contract, 'payment_type', None) else None),
+            'bank_account': (contract.bank_account.id
+                if getattr(contract, 'bank_account', None) else None),
             'lessee_company': lessee.id if lessee else None,
             'lessee_contacts': [lessee.id] if lessee else [],
+            'start_date': contract.start_date,
+            'end_date': getattr(contract, 'end_date', None),
             'asset': asset.id if asset else None,
+            'deposit': getattr(contract, 'deposit', None),
+            'guarantee_amount': getattr(contract, 'guarantee_amount', None),
             'amount': self._get_contract_amount(contract),
             'cadastre': contract.cadastre or self._get_asset_cadastre(asset),
+            'home_assessment': getattr(asset, 'home_assessment', None)
+            if asset else None,
+            'energy_certificate': getattr(asset, 'energy_certificate', None)
+            if asset else None,
             'attribute_set': attribute_set.id if attribute_set else None,
             'attributes': attributes,
             'origin_attachments': [],
@@ -466,6 +511,11 @@ class ContractGenerateWizard(Wizard):
             or getattr(asset, 'home_assessment', None)
             or '')
 
+    def _default_contract_title(self, contract):
+        number = contract.number or contract.reference or ''
+        return gettext('contract_document.msg_default_contract_title',
+            contract=safe_text(number).strip())
+
     def _default_parties(self):
         return self._default_section_lines(
             'contract.document.party',
@@ -509,6 +559,8 @@ class ContractGenerateWizard(Wizard):
         asset = self.start.asset or self._get_default_asset(contract)
         lessor_company = self.start.lessor_company
         lessor_contact = self.start.lessor_contact
+        payment_type = self.start.payment_type
+        bank_account = self.start.bank_account
         lessee_company = self.start.lessee_company
         lessee_contacts = list(self.start.lessee_contacts or [])
         addresses = []
@@ -524,6 +576,8 @@ class ContractGenerateWizard(Wizard):
         wrapped_lessee_contacts = [
             TemplateRecord(p) for p in lessee_contacts if p]
         attributes = dict(self.start.attributes or {})
+        attribute_set = self.start.attribute_set
+        certificate = self.start.certificate
         attachment_names = [
             attachment.name for attachment in self.start.origin_attachments
             if attachment and attachment.name]
@@ -547,18 +601,48 @@ class ContractGenerateWizard(Wizard):
                 if lessor_contact else '',
                 'lessor_contact_name': safe_text(lessor_contact.rec_name
                     if lessor_contact else ''),
+                'payment_type': TemplateRecord(payment_type)
+                if payment_type else '',
+                'payment_type_name': safe_text(payment_type.rec_name
+                    if payment_type else ''),
+                'bank_account': TemplateRecord(bank_account)
+                if bank_account else '',
+                'bank_account_name': safe_text(bank_account.rec_name
+                    if bank_account else ''),
                 'lessee_company': TemplateRecord(lessee_company)
                 if lessee_company else '',
                 'lessee_company_name': safe_text(lessee_company.rec_name
                     if lessee_company else ''),
                 'lessee_contacts': wrapped_lessee_contacts,
                 'lessee_contacts_text': ', '.join(lessee_contact_names),
+                'start_date': self.start.start_date,
+                'start_date_text': safe_text(self.start.start_date),
+                'end_date': self.start.end_date,
+                'end_date_text': safe_text(self.start.end_date),
+                'contract_years': self.start.contract_years,
+                'contract_years_text': safe_text(self.start.contract_years),
                 'asset': TemplateRecord(asset) if asset else '',
                 'asset_name': safe_text(asset.rec_name if asset else ''),
                 'asset_address': self._get_asset_address(asset) or '; '.join(addresses),
-                'cadastre': safe_text(self.start.cadastre),
+                'deposit': safe_text(self.start.deposit),
+                'deposit_value': self.start.deposit,
+                'guarantee_amount': safe_text(self.start.guarantee_amount),
+                'guarantee_amount_value': self.start.guarantee_amount,
                 'amount': safe_text(self.start.amount),
-                'start_date': safe_text(contract.start_date),
+                'amount_value': self.start.amount,
+                'cadastre': safe_text(self.start.cadastre),
+                'home_assessment': safe_text(self.start.home_assessment),
+                'energy_certificate': safe_text(
+                    self.start.energy_certificate),
+                'attribute_set': TemplateRecord(attribute_set)
+                if attribute_set else '',
+                'attribute_set_name': safe_text(attribute_set.rec_name
+                    if attribute_set else ''),
+                'sign_digitally': bool(self.start.sign_digitally),
+                'certificate': TemplateRecord(certificate)
+                if certificate else '',
+                'certificate_name': safe_text(certificate.rec_name
+                    if certificate else ''),
                 'first_invoice_date': safe_text(contract.first_invoice_date),
                 'currency': safe_text(contract.currency.rec_name
                     if contract.currency else ''),
@@ -625,14 +709,13 @@ class ContractGenerateWizard(Wizard):
 
     def _build_docx(self, context):
         paragraphs = []
-        paragraphs.append({
-                'text': 'CONTRACT %s' % (context['contract_number']
-                    or context['contract_reference']
-                    or '').strip(),
-                'bold': True,
-                'center': True,
-                })
-        paragraphs.append({'text': ''})
+        if self.start.contract_title:
+            paragraphs.append({
+                    'text': self.start.contract_title,
+                    'bold': True,
+                    'center': True,
+                    })
+            paragraphs.append({'text': ''})
 
         self._append_line_section(paragraphs, self.start.parties_title,
             self.start.parties, context)
@@ -672,11 +755,12 @@ class ContractGenerateWizard(Wizard):
                     'center': True,
                     })
             for index, clause in enumerate(ordered_clauses, start=1):
-                title = clause.title or clause.name
-                paragraphs.append({
-                        'text': '%s. %s' % (index, title),
-                        'bold': True,
-                        })
+                title = clause.title
+                if title:
+                    paragraphs.append({
+                            'text': '%s. %s' % (index, title),
+                            'bold': True,
+                            })
                 rendered = self._render_text(clause.content, context)
                 self._append_markdown(paragraphs, rendered)
                 paragraphs.append({'text': ''})

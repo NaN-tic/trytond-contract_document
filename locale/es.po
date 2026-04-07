@@ -138,6 +138,10 @@ msgctxt "field:contract.generate.start,certificate:"
 msgid "Certificate"
 msgstr "Certificado"
 
+msgctxt "field:contract.generate.start,deposit:"
+msgid "Deposit"
+msgstr "Fianza"
+
 msgctxt "field:contract.generate.start,clauses:"
 msgid "Clauses"
 msgstr "Cláusulas"
@@ -154,6 +158,10 @@ msgctxt "field:contract.generate.start,contract_base:"
 msgid "Contract Base"
 msgstr "Contrato base"
 
+msgctxt "field:contract.generate.start,contract_title:"
+msgid "Contract Title"
+msgstr "Título del contrato"
+
 msgctxt "field:contract.generate.start,lessor_company:"
 msgid "Lessor Company"
 msgstr "Empresa arrendadora"
@@ -161,6 +169,14 @@ msgstr "Empresa arrendadora"
 msgctxt "field:contract.generate.start,lessor_contact:"
 msgid "Lessor Contact"
 msgstr "Contacto arrendador"
+
+msgctxt "field:contract.generate.start,payment_type:"
+msgid "Payment Type"
+msgstr "Tipo de pago"
+
+msgctxt "field:contract.generate.start,bank_account:"
+msgid "Bank Account"
+msgstr "Cuenta bancaria"
 
 msgctxt "field:contract.generate.start,lessee_company:"
 msgid "Lessee Company"
@@ -173,6 +189,14 @@ msgstr "Contactos arrendatarios"
 msgctxt "field:contract.generate.start,origin:"
 msgid "Origin"
 msgstr "Origen"
+
+msgctxt "field:contract.generate.start,guarantee_amount:"
+msgid "Guarantee Amount"
+msgstr "Importe garantía"
+
+msgctxt "field:contract.generate.start,home_assessment:"
+msgid "Home Assessment"
+msgstr "Cédula de habitabilidad"
 
 msgctxt "field:contract.generate.start,origin_attachments:"
 msgid "Contract Attachments"
@@ -190,6 +214,10 @@ msgctxt "field:contract.generate.start,sign_digitally:"
 msgid "Sign Digitally"
 msgstr "Firmar digitalmente"
 
+msgctxt "field:contract.generate.start,start_date:"
+msgid "Start Date"
+msgstr "Fecha de inicio"
+
 msgctxt "field:contract.generate.start,statements:"
 msgid "Statements"
 msgstr "Manifiestan"
@@ -197,6 +225,18 @@ msgstr "Manifiestan"
 msgctxt "field:contract.generate.start,statements_title:"
 msgid "Statements Title"
 msgstr "Título de manifiestan"
+
+msgctxt "field:contract.generate.start,end_date:"
+msgid "End Date"
+msgstr "Fecha de fin"
+
+msgctxt "field:contract.generate.start,energy_certificate:"
+msgid "Energy Certificate"
+msgstr "Certificado energético"
+
+msgctxt "field:contract.generate.start,contract_years:"
+msgid "Contract Years"
+msgstr "Años de contrato"
 
 msgctxt "field:contract.generate.start.appearance,appearance:"
 msgid "Appearance Text"
@@ -309,6 +349,26 @@ msgstr "Textos de reunidos"
 msgctxt "model:ir.message,text:msg_missing_active_contract"
 msgid "No active contract was found to generate the document."
 msgstr "No se ha encontrado ningún contrato activo para generar el documento."
+
+msgctxt "model:ir.message,text:msg_default_appearances_title"
+msgid "APPEARANCES"
+msgstr "INTERVIENEN"
+
+msgctxt "model:ir.message,text:msg_default_clauses_title"
+msgid "CLAUSES"
+msgstr "CLÁUSULAS"
+
+msgctxt "model:ir.message,text:msg_default_contract_title"
+msgid "CONTRACT %(contract)s"
+msgstr "CONTRATO %(contract)s"
+
+msgctxt "model:ir.message,text:msg_default_parties_title"
+msgid "PARTIES"
+msgstr "REUNIDOS"
+
+msgctxt "model:ir.message,text:msg_default_statements_title"
+msgid "STATEMENTS"
+msgstr "MANIFIESTAN"
 
 msgctxt "model:ir.message,text:msg_missing_clauses"
 msgid "At least one clause is required to generate the contract document."
