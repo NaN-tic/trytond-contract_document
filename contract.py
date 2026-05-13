@@ -28,6 +28,10 @@ class Contract(metaclass=PoolMeta):
     __name__ = 'contract'
 
     cadastre = fields.Char('Cadastre')
+    grace_period_months = fields.Integer('Grace Period Months')
+    index_price = fields.Numeric('Index Price', digits=(16, 2))
+    previous_contract_updated_price = fields.Numeric(
+        'Previous Contract Updated Price', digits=(16, 2))
     document_attribute_set = fields.Many2One('asset.attribute.set',
         'Document Attribute Set')
     document_attributes = fields.Dict('asset.attribute',
@@ -36,6 +40,54 @@ class Contract(metaclass=PoolMeta):
             ], states={
             'readonly': Bool(Eval('state')) & (Eval('state') != 'draft'),
             }, depends=['document_attribute_set', 'state'])
+    lessor_document_contacts = fields.One2Many('contract.document.contact',
+        'contract', 'Lessor Persons', domain=[
+            ('type', '=', 'lessor'),
+            ], context={
+            'default_type': 'lessor',
+            })
+    lessee_document_contacts = fields.One2Many('contract.document.contact',
+        'contract', 'Lessee Persons', domain=[
+            ('type', '=', 'lessee'),
+            ], context={
+            'default_type': 'lessee',
+            })
+
+
+class ContractContactRole(ModelSQL, ModelView):
+    'Contract Contact Role'
+    __name__ = 'contract.document.contact.role'
+
+    name = fields.Char('Name', required=True, translate=True)
+
+    def get_rec_name(self, name):
+        return self.name
+
+
+class ContractContact(sequence_ordered(), ModelSQL, ModelView):
+    'Contract Document Contact'
+    __name__ = 'contract.document.contact'
+
+    contract = fields.Many2One('contract', 'Contract', required=True,
+        ondelete='CASCADE')
+    type = fields.Selection([
+            ('lessor', 'Lessor'),
+            ('lessee', 'Lessee'),
+            ], 'Type', required=True)
+    name = fields.Char('Full Name', required=True)
+    identifier = fields.Char('Identifier')
+    address = fields.Text('Address')
+    mobile = fields.Char('Mobile')
+    email = fields.Char('Email')
+    acting_as = fields.Many2One('contract.document.contact.role',
+        'Acting As')
+
+    @staticmethod
+    def default_type():
+        return Transaction().context.get('default_type')
+
+    def get_rec_name(self, name):
+        return self.name
 
 
 class ContractClause(
@@ -70,8 +122,44 @@ class ContractBase(ModelSQL, ModelView):
     __name__ = 'contract.document.base'
 
     name = fields.Char('Name', required=True)
+    parties = fields.One2Many('contract.document.base.party', 'base',
+        'Parties')
+    appearances = fields.One2Many('contract.document.base.appearance', 'base',
+        'Appearances')
+    statements = fields.One2Many('contract.document.base.statement', 'base',
+        'Statements')
     clauses = fields.One2Many('contract.document.base.clause', 'base',
         'Clauses')
+
+
+class ContractBaseParty(sequence_ordered(), ModelSQL, ModelView):
+    'Contract Base Party Text'
+    __name__ = 'contract.document.base.party'
+
+    base = fields.Many2One('contract.document.base', 'Base', required=True,
+        ondelete='CASCADE')
+    party = fields.Many2One('contract.document.party', 'Party Text',
+        required=True, ondelete='RESTRICT')
+
+
+class ContractBaseAppearance(sequence_ordered(), ModelSQL, ModelView):
+    'Contract Base Appearance Text'
+    __name__ = 'contract.document.base.appearance'
+
+    base = fields.Many2One('contract.document.base', 'Base', required=True,
+        ondelete='CASCADE')
+    appearance = fields.Many2One('contract.document.appearance',
+        'Appearance Text', required=True, ondelete='RESTRICT')
+
+
+class ContractBaseStatement(sequence_ordered(), ModelSQL, ModelView):
+    'Contract Base Statement'
+    __name__ = 'contract.document.base.statement'
+
+    base = fields.Many2One('contract.document.base', 'Base', required=True,
+        ondelete='CASCADE')
+    statement = fields.Many2One('contract.document.manifest', 'Statement',
+        required=True, ondelete='RESTRICT')
 
 
 class ContractBaseClause(sequence_ordered(), ModelSQL, ModelView):
@@ -246,6 +334,28 @@ class ContractGenerateAttachment(ModelView):
     data = fields.Binary('Data', filename='name')
 
 
+class ContractGenerateContact(ModelView):
+    'Contract Generate Contact'
+    __name__ = 'contract.generate.start.contact'
+
+    sequence = fields.Integer('Sequence')
+    type = fields.Selection([
+            ('lessor', 'Lessor'),
+            ('lessee', 'Lessee'),
+            ], 'Type')
+    name = fields.Char('Full Name', required=True)
+    identifier = fields.Char('Identifier')
+    address = fields.Text('Address')
+    mobile = fields.Char('Mobile')
+    email = fields.Char('Email')
+    acting_as = fields.Many2One('contract.document.contact.role',
+        'Acting As')
+
+    @staticmethod
+    def default_type():
+        return Transaction().context.get('default_type')
+
+
 class ContractGenerateStart(ModelView):
     'Generate Contract'
     __name__ = 'contract.generate.start'
@@ -274,6 +384,11 @@ class ContractGenerateStart(ModelView):
         context={
             'company': Eval('company', -1),
             }, depends=['company'])
+    lessor_document_contacts = fields.One2Many(
+        'contract.generate.start.contact', None, 'Lessor Persons',
+        domain=[('type', '=', 'lessor')], context={
+            'default_type': 'lessor',
+            })
     payment_type = fields.Many2One('account.payment.type', 'Payment Type',
         domain=[
             ('kind', 'in', ['both', 'receivable']),
@@ -283,10 +398,15 @@ class ContractGenerateStart(ModelView):
         context={
             'company': Eval('company', -1),
             }, depends=['company'])
-    lessee_contacts = fields.Many2Many('party.party', None, None,
-        'Lessee Contacts', context={
+    lessee_contacts = fields.Many2One('party.party', 'Lessee Contact',
+        context={
             'company': Eval('company', -1),
             }, depends=['company'])
+    lessee_document_contacts = fields.One2Many(
+        'contract.generate.start.contact', None, 'Lessee Persons',
+        domain=[('type', '=', 'lessee')], context={
+            'default_type': 'lessee',
+            })
     start_date = fields.Date('Start Date')
     end_date = fields.Date('End Date')
     contract_years = fields.Function(fields.Numeric('Contract Years',
@@ -339,12 +459,52 @@ class ContractGenerateStart(ModelView):
     def default_clauses_title():
         return gettext('contract_document.msg_default_clauses_title')
 
-    @fields.depends('contract_base', 'clauses')
+    @fields.depends('contract_base', 'parties', 'appearances', 'statements',
+        'clauses')
     def on_change_contract_base(self):
         pool = Pool()
         ClauseLine = pool.get('contract.generate.start.clause')
+        PartyLine = pool.get('contract.generate.start.party')
+        AppearanceLine = pool.get('contract.generate.start.appearance')
+        StatementLine = pool.get('contract.generate.start.statement')
         if not self.contract_base:
             return
+        if self.contract_base.parties:
+            parties = []
+            for index, line in enumerate(sorted(self.contract_base.parties,
+                        key=lambda l: ((l.sequence is None), l.sequence or 0,
+                            l.id or 0)), start=1):
+                party_line = PartyLine()
+                party_line.sequence = index
+                party_line.party = line.party
+                party_line.title = line.party.title
+                party_line.content = line.party.content
+                parties.append(party_line)
+            self.parties = parties
+        if self.contract_base.appearances:
+            appearances = []
+            for index, line in enumerate(sorted(self.contract_base.appearances,
+                        key=lambda l: ((l.sequence is None), l.sequence or 0,
+                            l.id or 0)), start=1):
+                appearance_line = AppearanceLine()
+                appearance_line.sequence = index
+                appearance_line.appearance = line.appearance
+                appearance_line.title = line.appearance.title
+                appearance_line.content = line.appearance.content
+                appearances.append(appearance_line)
+            self.appearances = appearances
+        if self.contract_base.statements:
+            statements = []
+            for index, line in enumerate(sorted(self.contract_base.statements,
+                        key=lambda l: ((l.sequence is None), l.sequence or 0,
+                            l.id or 0)), start=1):
+                statement_line = StatementLine()
+                statement_line.sequence = index
+                statement_line.statement = line.statement
+                statement_line.title = line.statement.title
+                statement_line.content = line.statement.content
+                statements.append(statement_line)
+            self.statements = statements
         clauses = []
         lines = sorted(self.contract_base.clauses,
             key=lambda l: ((l.sequence is None), l.sequence or 0, l.id or 0))
@@ -422,12 +582,16 @@ class ContractGenerateWizard(Wizard):
             'appearances': self._default_appearances(),
             'lessor_company': lessor.id if lessor else None,
             'lessor_contact': lessor.id if lessor else None,
+            'lessor_document_contacts': self._default_document_contacts(
+                contract, 'lessor'),
             'payment_type': (contract.payment_type.id
                 if getattr(contract, 'payment_type', None) else None),
             'bank_account': (contract.bank_account.id
                 if getattr(contract, 'bank_account', None) else None),
             'lessee_company': lessee.id if lessee else None,
-            'lessee_contacts': [lessee.id] if lessee else [],
+            'lessee_contacts': lessee.id if lessee else None,
+            'lessee_document_contacts': self._default_document_contacts(
+                contract, 'lessee'),
             'start_date': contract.start_date,
             'end_date': getattr(contract, 'end_date', None),
             'asset': asset.id if asset else None,
@@ -449,9 +613,6 @@ class ContractGenerateWizard(Wizard):
         pool = Pool()
         Attachment = pool.get('ir.attachment')
         contract = self._get_contract()
-        if not any(line.clause for line in self.start.clauses or []):
-            raise UserError(gettext(
-                'contract_document.msg_missing_clauses'))
 
         self._write_back_contract(contract)
         context = self._get_render_context(contract)
@@ -498,10 +659,19 @@ class ContractGenerateWizard(Wizard):
                 return line.asset
 
     def _get_contract_amount(self, contract):
+        reference_date = contract.start_date
         amount = Decimal('0.0')
         for line in contract.lines:
+            if reference_date:
+                if line.start_date and line.start_date > reference_date:
+                    continue
+                if line.end_date and line.end_date <= reference_date:
+                    continue
+            quantity = line.quantity
+            if quantity is None:
+                quantity = 1
             unit_price = Decimal(str(line.unit_price or 0))
-            amount += unit_price
+            amount += unit_price * Decimal(str(quantity))
         return amount
 
     def _get_asset_cadastre(self, asset):
@@ -549,11 +719,59 @@ class ContractGenerateWizard(Wizard):
             lines.append(line)
         return lines
 
+    def _default_document_contacts(self, contract, contact_type):
+        pool = Pool()
+        ContactLine = pool.get('contract.generate.start.contact')
+        field_name = '%s_document_contacts' % contact_type
+        lines = []
+        for index, record in enumerate(getattr(contract, field_name, []),
+                start=1):
+            line = ContactLine()
+            line.sequence = index
+            line.type = contact_type
+            line.name = record.name
+            line.identifier = record.identifier
+            line.address = record.address
+            line.mobile = record.mobile
+            line.email = record.email
+            line.acting_as = record.acting_as
+            lines.append(line)
+        return lines
+
     def _write_back_contract(self, contract):
+        pool = Pool()
+        Contact = pool.get('contract.document.contact')
         contract.cadastre = self.start.cadastre
         contract.document_attribute_set = self.start.attribute_set
         contract.document_attributes = self.start.attributes or {}
         contract.save()
+        to_delete = Contact.search([
+                ('contract', '=', contract.id),
+                ('type', 'in', ['lessor', 'lessee']),
+                ])
+        if to_delete:
+            Contact.delete(to_delete)
+        to_create = []
+        for contact_type, lines in (
+                ('lessor', self.start.lessor_document_contacts or []),
+                ('lessee', self.start.lessee_document_contacts or [])):
+            for index, line in enumerate(lines, start=1):
+                if not line.name:
+                    continue
+                to_create.append({
+                        'contract': contract.id,
+                        'sequence': index,
+                        'type': contact_type,
+                        'name': line.name,
+                        'identifier': line.identifier,
+                        'address': line.address,
+                        'mobile': line.mobile,
+                        'email': line.email,
+                        'acting_as': (line.acting_as.id
+                            if line.acting_as else None),
+                        })
+        if to_create:
+            Contact.create(to_create)
 
     def _get_render_context(self, contract):
         asset = self.start.asset or self._get_default_asset(contract)
@@ -562,7 +780,12 @@ class ContractGenerateWizard(Wizard):
         payment_type = self.start.payment_type
         bank_account = self.start.bank_account
         lessee_company = self.start.lessee_company
-        lessee_contacts = list(self.start.lessee_contacts or [])
+        lessee_contact = self.start.lessee_contacts
+        lessee_contacts = [lessee_contact] if lessee_contact else []
+        lessor_document_contacts = self._wrap_document_contacts(
+            self.start.lessor_document_contacts or [])
+        lessee_document_contacts = self._wrap_document_contacts(
+            self.start.lessee_document_contacts or [])
         addresses = []
         if asset and getattr(asset, 'current_address', None):
             addresses.append(asset.current_address.rec_name)
@@ -585,6 +808,9 @@ class ContractGenerateWizard(Wizard):
                 'today': datetime.now().strftime('%d/%m/%Y'),
                 'contract_number': safe_text(contract.number),
                 'contract_reference': safe_text(contract.reference),
+                'contract': TemplateRecord(contract),
+                'contract_lines': [TemplateRecord(line)
+                    for line in contract.lines],
                 'contract_party': TemplateRecord(contract.party)
                 if contract.party else '',
                 'contract_party_name': safe_text(contract.party.rec_name
@@ -601,6 +827,9 @@ class ContractGenerateWizard(Wizard):
                 if lessor_contact else '',
                 'lessor_contact_name': safe_text(lessor_contact.rec_name
                     if lessor_contact else ''),
+                'lessor_document_contacts': lessor_document_contacts,
+                'lessor_document_contacts_text': self._contacts_text(
+                    lessor_document_contacts),
                 'payment_type': TemplateRecord(payment_type)
                 if payment_type else '',
                 'payment_type_name': safe_text(payment_type.rec_name
@@ -613,8 +842,15 @@ class ContractGenerateWizard(Wizard):
                 if lessee_company else '',
                 'lessee_company_name': safe_text(lessee_company.rec_name
                     if lessee_company else ''),
+                'lessee_contact': TemplateRecord(lessee_contact)
+                if lessee_contact else '',
+                'lessee_contact_name': safe_text(lessee_contact.rec_name
+                    if lessee_contact else ''),
                 'lessee_contacts': wrapped_lessee_contacts,
                 'lessee_contacts_text': ', '.join(lessee_contact_names),
+                'lessee_document_contacts': lessee_document_contacts,
+                'lessee_document_contacts_text': self._contacts_text(
+                    lessee_document_contacts),
                 'start_date': self.start.start_date,
                 'start_date_text': safe_text(self.start.start_date),
                 'end_date': self.start.end_date,
@@ -657,6 +893,12 @@ class ContractGenerateWizard(Wizard):
             for key, value in sorted(attributes.items()))
         context['attachments_block'] = context['origin_attachments_text']
         return context
+
+    def _wrap_document_contacts(self, contacts):
+        return [TemplateRecord(contact) for contact in contacts if contact]
+
+    def _contacts_text(self, contacts):
+        return ', '.join(contact.name for contact in contacts if contact.name)
 
     def _get_asset_address(self, asset):
         if not asset:
@@ -722,22 +964,30 @@ class ContractGenerateWizard(Wizard):
         self._append_line_section(paragraphs, self.start.appearances_title,
             self.start.appearances, context)
 
-        if self.start.statements_title:
+        rendered_statements = []
+        for statement in sorted(self.start.statements,
+                key=lambda l: ((l.sequence is None), l.sequence or 0,
+                    l.id or 0)):
+            rendered_statements.append({
+                    'title': statement.title,
+                    'content': self._render_text(statement.content, context),
+                    })
+        rendered_statements = [s for s in rendered_statements
+            if (s['title'] and s['title'].strip())
+            or (s['content'] and s['content'].strip())]
+        if rendered_statements and self.start.statements_title:
             paragraphs.append({
                     'text': self.start.statements_title,
                     'bold': True,
                     'center': True,
                     })
-            for index, statement in enumerate(sorted(self.start.statements,
-                    key=lambda l: ((l.sequence is None), l.sequence or 0,
-                        l.id or 0)), start=1):
-                content = self._render_text(statement.content, context)
-                if statement.title:
+            for index, statement in enumerate(rendered_statements, start=1):
+                if statement['title']:
                     paragraphs.append({
-                            'text': '%s. %s' % (index, statement.title),
+                            'text': '%s. %s' % (index, statement['title']),
                             'bold': True,
                             })
-                self._append_markdown(paragraphs, content)
+                self._append_markdown(paragraphs, statement['content'])
                 paragraphs.append({'text': ''})
 
         seen = set()
@@ -747,44 +997,60 @@ class ContractGenerateWizard(Wizard):
             if line.clause:
                 self._append_clause_tree(line.clause, ordered_clauses, seen)
 
-        if ordered_clauses and self.start.clauses_title:
+        rendered_clauses = []
+        for clause in ordered_clauses:
+            rendered_clauses.append({
+                    'title': clause.title,
+                    'content': self._render_text(clause.content, context),
+                    })
+        rendered_clauses = [c for c in rendered_clauses
+            if (c['title'] and c['title'].strip())
+            or (c['content'] and c['content'].strip())]
+        if rendered_clauses and self.start.clauses_title:
             paragraphs.append({'text': ''})
             paragraphs.append({
                     'text': self.start.clauses_title,
                     'bold': True,
                     'center': True,
                     })
-            for index, clause in enumerate(ordered_clauses, start=1):
-                title = clause.title
+            for index, clause in enumerate(rendered_clauses, start=1):
+                title = clause['title']
                 if title:
                     paragraphs.append({
                             'text': '%s. %s' % (index, title),
                             'bold': True,
                             })
-                rendered = self._render_text(clause.content, context)
-                self._append_markdown(paragraphs, rendered)
+                self._append_markdown(paragraphs, clause['content'])
                 paragraphs.append({'text': ''})
 
         return self._create_docx(paragraphs)
 
     def _append_line_section(self, paragraphs, title, lines, context):
-        if not title:
+        rendered_lines = []
+        for section_line in sorted(lines,
+                key=lambda l: ((l.sequence is None), l.sequence or 0,
+                    l.id or 0)):
+            rendered_lines.append({
+                    'title': section_line.title,
+                    'content': self._render_text(section_line.content, context),
+                    })
+        rendered_lines = [line for line in rendered_lines
+            if (line['title'] and line['title'].strip())
+            or (line['content'] and line['content'].strip())]
+        if not title or not rendered_lines:
             return
         paragraphs.append({
                 'text': title,
                 'bold': True,
                 'center': True,
                 })
-        for section_line in sorted(lines,
-                key=lambda l: ((l.sequence is None), l.sequence or 0,
-                    l.id or 0)):
-            if section_line.title:
+        for section_line in rendered_lines:
+            if section_line['title']:
                 paragraphs.append({
-                        'text': section_line.title,
+                        'text': section_line['title'],
                         'bold': True,
                         })
-            rendered = self._render_text(section_line.content, context)
-            self._append_markdown(paragraphs, rendered)
+            self._append_markdown(paragraphs, section_line['content'])
             paragraphs.append({'text': ''})
         paragraphs.append({'text': ''})
 
@@ -891,6 +1157,7 @@ class ContractGenerateWizard(Wizard):
         ppr = []
         if paragraph.get('center'):
             ppr.append('<w:jc w:val="center"/>')
+        ppr.append('<w:spacing w:after="0" w:line="240" w:lineRule="auto"/>')
         ppr_xml = '<w:pPr>%s</w:pPr>' % ''.join(ppr) if ppr else ''
         runs = paragraph.get('runs')
         if runs is None:

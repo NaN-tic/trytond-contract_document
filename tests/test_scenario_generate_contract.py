@@ -30,16 +30,26 @@ class TestGenerateContract(unittest.TestCase):
         self.assertEqual(wizard.form.start_date.isoformat(), '2015-01-01')
         self.assertEqual(wizard.form.end_date.isoformat(), '2016-01-01')
         self.assertEqual(wizard.form.contract_years, Decimal('1.00'))
+        self.assertEqual(wizard.form.amount, Decimal('1450.00'))
 
         wizard.form.lessor_company = vars.lessor
         wizard.form.lessor_contact = vars.lessor
         wizard.form.contract_base = vars.contract_base
 
+        self.assertEqual(len(wizard.form.parties), 1)
         self.assertEqual(len(wizard.form.clauses), 1)
         self.assertEqual(wizard.form.clauses[0].title, 'Clause Title')
         self.assertEqual(wizard.form.parties[0].title, 'Party Title')
         self.assertEqual(wizard.form.appearances[0].title, 'Appearance Title')
         self.assertEqual(wizard.form.statements[0].title, 'Statement Title')
+        wizard.form.clauses.pop()
+        lessee_contact = wizard.form.lessee_document_contacts.new()
+        lessee_contact.name = 'Second Tenant'
+        lessee_contact.identifier = '12345678A'
+        lessee_contact.address = 'Main Street 1'
+        lessee_contact.mobile = '600000000'
+        lessee_contact.email = 'tenant@example.com'
+        lessee_contact.acting_as = vars.contact_role
 
         wizard.execute('generate')
 
@@ -47,6 +57,12 @@ class TestGenerateContract(unittest.TestCase):
         self.assertEqual(len(attachments), 1)
         attachment, = attachments
         self.assertTrue(attachment.name.endswith('.docx'))
+
+        Contract = Model.get('contract')
+        contract = Contract(vars.contract.id)
+        self.assertEqual(len(contract.lessee_document_contacts), 1)
+        self.assertEqual(contract.lessee_document_contacts[0].name,
+            'Second Tenant')
 
         with zipfile.ZipFile(io.BytesIO(bytes(attachment.data)), 'r') as docx:
             document_xml = docx.read('word/document.xml').decode('utf-8')
@@ -58,7 +74,9 @@ class TestGenerateContract(unittest.TestCase):
         self.assertIn('Receivable', document_xml)
         self.assertIn('ES76 2077 0024 0031 0257 5766', document_xml)
         self.assertIn('Statement Title', document_xml)
+        self.assertIn('Service Monthly Rent', document_xml)
+        self.assertIn('Quantity 2.0', document_xml)
         self.assertIn('1.00', document_xml)
-        self.assertIn('Clause Title', document_xml)
-        self.assertIn('Apartment 1A', document_xml)
-        self.assertIn('750', document_xml)
+        self.assertIn('w:spacing w:after=\"0\" w:line=\"240\"', document_xml)
+        self.assertNotIn('CLAUSES', document_xml)
+        self.assertNotIn('Clause Title', document_xml)

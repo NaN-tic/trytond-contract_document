@@ -1,5 +1,18 @@
 <form col="4">
     <label name="name"/>
     <field name="name" colspan="3"/>
-    <field name="clauses" colspan="4" mode="tree,form"/>
+    <notebook colspan="4">
+        <page string="Parties" id="base_parties">
+            <field name="parties" colspan="4" mode="tree"/>
+        </page>
+        <page string="Appearances" id="base_appearances">
+            <field name="appearances" colspan="4" mode="tree"/>
+        </page>
+        <page string="Statements" id="base_statements">
+            <field name="statements" colspan="4" mode="tree"/>
+        </page>
+        <page string="Clauses" id="base_clauses">
+            <field name="clauses" colspan="4" mode="tree,form"/>
+        </page>
+    </notebook>
 </form>

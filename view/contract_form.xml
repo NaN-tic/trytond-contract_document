@@ -3,11 +3,27 @@
         <page string="Document" id="document">
             <label name="cadastre"/>
             <field name="cadastre"/>
-            <label name="document_attribute_set"/>
-            <field name="document_attribute_set"/>
-            <separator id="document_attributes" string="Attributes"
-                colspan="4"/>
-            <field name="document_attributes" colspan="4"/>
+            <label name="grace_period_months"/>
+            <field name="grace_period_months"/>
+            <label name="index_price"/>
+            <field name="index_price"/>
+            <label name="previous_contract_updated_price"/>
+            <field name="previous_contract_updated_price"/>
+            <notebook colspan="4">
+                <page string="Attributes" id="document_attributes_page">
+                    <label name="document_attribute_set"/>
+                    <field name="document_attribute_set"/>
+                    <field name="document_attributes" colspan="4"/>
+                </page>
+                <page string="Lessor" id="lessor_document_contacts_page">
+                    <field name="lessor_document_contacts" colspan="4"
+                        mode="tree,form"/>
+                </page>
+                <page string="Lessee" id="lessee_document_contacts_page">
+                    <field name="lessee_document_contacts" colspan="4"
+                        mode="tree,form"/>
+                </page>
+            </notebook>
         </page>
     </xpath>
 </data>

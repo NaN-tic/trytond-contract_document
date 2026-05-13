@@ -5,17 +5,8 @@
         <page string="General" id="general">
             <label name="contract_title"/>
             <field name="contract_title" colspan="3"/>
-            <label name="lessor_company"/>
-            <field name="lessor_company"/>
-            <label name="lessor_contact"/>
-            <field name="lessor_contact"/>
-            <label name="payment_type"/>
-            <field name="payment_type"/>
-            <label name="bank_account"/>
-            <field name="bank_account"/>
-            <label name="lessee_company"/>
-            <field name="lessee_company"/>
-            <field name="lessee_contacts" colspan="2"/>
+            <label name="contract_base"/>
+            <field name="contract_base" colspan="3"/>
             <newline/>
             <label name="start_date"/>
             <field name="start_date"/>
@@ -47,6 +38,24 @@
             <label name="certificate"/>
             <field name="certificate"/>
         </page>
+        <page string="Lessor" id="lessor">
+            <label name="lessor_company"/>
+            <field name="lessor_company"/>
+            <label name="lessor_contact"/>
+            <field name="lessor_contact"/>
+            <label name="payment_type"/>
+            <field name="payment_type"/>
+            <label name="bank_account"/>
+            <field name="bank_account"/>
+            <field name="lessor_document_contacts" colspan="4"/>
+        </page>
+        <page string="Lessee" id="lessee">
+            <label name="lessee_company"/>
+            <field name="lessee_company"/>
+            <field name="lessee_contacts" colspan="2"/>
+            <newline/>
+            <field name="lessee_document_contacts" colspan="4"/>
+        </page>
         <page string="Parties" id="parties">
             <label name="parties_title"/>
             <field name="parties_title" colspan="3"/>
@@ -65,8 +74,6 @@
         <page string="Clauses" id="clauses">
             <label name="clauses_title"/>
             <field name="clauses_title" colspan="3"/>
-            <label name="contract_base"/>
-            <field name="contract_base" colspan="3"/>
             <field name="clauses" colspan="4"/>
         </page>
         <page string="Attachments" id="attachments_page">

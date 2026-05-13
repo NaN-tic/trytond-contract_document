@@ -130,7 +130,9 @@ def setup():
     party_text.title = 'Party Title'
     party_text.content = (
         'Lessor {{ lessor_company_name }}\n'
-        'Contact {{ lessor_contact_name }}')
+        'Contact {{ lessor_contact_name }}\n'
+        'Service {{ contract.lines[0].service.rec_name }}\n'
+        'Quantity {{ contract.lines[0].quantity }}')
     party_text.save()
 
     ContractAppearance = Model.get('contract.document.appearance')
@@ -149,9 +151,19 @@ def setup():
 
     ContractBase = Model.get('contract.document.base')
     contract_base = ContractBase(name='Lease Base')
+    base_party = contract_base.parties.new()
+    base_party.party = party_text
+    base_appearance = contract_base.appearances.new()
+    base_appearance.appearance = appearance
+    base_statement = contract_base.statements.new()
+    base_statement.statement = statement
     base_clause = contract_base.clauses.new()
     base_clause.clause = clause
     contract_base.save()
+
+    ContactRole = Model.get('contract.document.contact.role')
+    contact_role = ContactRole(name='Tenant')
+    contact_role.save()
 
     Contract = Model.get('contract')
     contract = Contract()
@@ -168,8 +180,24 @@ def setup():
     line.service = service
     line.asset = asset
     line.unit_price = Decimal('750')
+    line.quantity = 2
+    line.unit = unit
     line.start_date = today
     line.end_date = datetime.date(2016, 1, 1)
+    discount_line = contract.lines.new()
+    discount_line.service = service
+    discount_line.unit_price = Decimal('50')
+    discount_line.quantity = -1
+    discount_line.unit = unit
+    discount_line.start_date = today
+    discount_line.end_date = datetime.date(2016, 1, 1)
+    ended_line = contract.lines.new()
+    ended_line.service = service
+    ended_line.unit_price = Decimal('100')
+    ended_line.quantity = 5
+    ended_line.unit = unit
+    ended_line.start_date = today
+    ended_line.end_date = today
     contract.save()
     contract.click('confirm')
 
@@ -181,4 +209,5 @@ def setup():
         bank_account=bank_account,
         asset=asset,
         contract=contract,
-        contract_base=contract_base)
+        contract_base=contract_base,
+        contact_role=contact_role)
