@@ -14,6 +14,98 @@ msgctxt "field:contract,document_attributes:"
 msgid "Document Attributes"
 msgstr "Atributos del documento"
 
+msgctxt "field:contract,grace_period_months:"
+msgid "Grace Period Months"
+msgstr "Carencia (meses)"
+
+msgctxt "field:contract,index_price:"
+msgid "Index Price"
+msgstr "Precio índice"
+
+msgctxt "field:contract,previous_contract_updated_price:"
+msgid "Previous Contract Updated Price"
+msgstr "Precio contrato anterior actualizado"
+
+msgctxt "field:contract,lessor_document_contacts:"
+msgid "Lessor Persons"
+msgstr "Personas arrendadoras"
+
+msgctxt "field:contract,lessee_document_contacts:"
+msgid "Lessee Persons"
+msgstr "Personas arrendatarias"
+
+msgctxt "field:contract.document.contact,contract:"
+msgid "Contract"
+msgstr "Contrato"
+
+msgctxt "field:contract.document.contact,type:"
+msgid "Type"
+msgstr "Tipo"
+
+msgctxt "field:contract.document.contact,name:"
+msgid "Full Name"
+msgstr "Nombre y apellidos"
+
+msgctxt "field:contract.document.contact,identifier:"
+msgid "Identifier"
+msgstr "Identificador"
+
+msgctxt "field:contract.document.contact,address:"
+msgid "Address"
+msgstr "Dirección"
+
+msgctxt "field:contract.document.contact,mobile:"
+msgid "Mobile"
+msgstr "Móvil"
+
+msgctxt "field:contract.document.contact,email:"
+msgid "Email"
+msgstr "Correo electrónico"
+
+msgctxt "field:contract.document.contact,acting_as:"
+msgid "Acting As"
+msgstr "Actuando como"
+
+msgctxt "field:contract.document.contact.role,name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:contract.document.base,parties:"
+msgid "Parties"
+msgstr "Reunidos"
+
+msgctxt "field:contract.document.base,appearances:"
+msgid "Appearances"
+msgstr "Intervienen"
+
+msgctxt "field:contract.document.base,statements:"
+msgid "Statements"
+msgstr "Manifestaciones"
+
+msgctxt "field:contract.document.base.party,party:"
+msgid "Party Text"
+msgstr "Texto de reunidos"
+
+msgctxt "field:contract.document.base.party,base:"
+msgid "Base"
+msgstr "Base"
+
+msgctxt "field:contract.document.base.appearance,appearance:"
+msgid "Appearance Text"
+msgstr "Texto de intervención"
+
+msgctxt "field:contract.document.base.appearance,base:"
+msgid "Base"
+msgstr "Base"
+
+msgctxt "field:contract.document.base.statement,statement:"
+msgid "Statement"
+msgstr "Manifestación"
+
+msgctxt "field:contract.document.base.statement,base:"
+msgid "Base"
+msgstr "Base"
+
 msgctxt "field:contract.document.appearance,active:"
 msgid "Active"
 msgstr "Activo"
@@ -170,6 +262,10 @@ msgctxt "field:contract.generate.start,lessor_contact:"
 msgid "Lessor Contact"
 msgstr "Contacto arrendador"
 
+msgctxt "field:contract.generate.start,lessor_document_contacts:"
+msgid "Lessor Persons"
+msgstr "Personas arrendadoras"
+
 msgctxt "field:contract.generate.start,payment_type:"
 msgid "Payment Type"
 msgstr "Tipo de pago"
@@ -183,8 +279,12 @@ msgid "Lessee Company"
 msgstr "Empresa arrendataria"
 
 msgctxt "field:contract.generate.start,lessee_contacts:"
-msgid "Lessee Contacts"
-msgstr "Contactos arrendatarios"
+msgid "Lessee Contact"
+msgstr "Contacto arrendatario"
+
+msgctxt "field:contract.generate.start,lessee_document_contacts:"
+msgid "Lessee Persons"
+msgstr "Personas arrendatarias"
 
 msgctxt "field:contract.generate.start,origin:"
 msgid "Origin"
@@ -257,6 +357,66 @@ msgstr "Título"
 msgctxt "field:contract.generate.start.attachment,data:"
 msgid "Data"
 msgstr "Datos"
+
+msgctxt "field:contract.generate.start.contact,type:"
+msgid "Type"
+msgstr "Tipo"
+
+msgctxt "field:contract.generate.start.contact,sequence:"
+msgid "Sequence"
+msgstr "Secuencia"
+
+msgctxt "field:contract.generate.start.contact,name:"
+msgid "Full Name"
+msgstr "Nombre y apellidos"
+
+msgctxt "field:contract.generate.start.contact,identifier:"
+msgid "Identifier"
+msgstr "Identificador"
+
+msgctxt "field:contract.generate.start.contact,address:"
+msgid "Address"
+msgstr "Dirección"
+
+msgctxt "field:contract.generate.start.contact,mobile:"
+msgid "Mobile"
+msgstr "Móvil"
+
+msgctxt "field:contract.generate.start.contact,email:"
+msgid "Email"
+msgstr "Correo electrónico"
+
+msgctxt "field:contract.generate.start.contact,acting_as:"
+msgid "Acting As"
+msgstr "Actuando como"
+
+msgctxt "selection:contract.document.contact,type:"
+msgid "Lessor"
+msgstr "Arrendador"
+
+msgctxt "selection:contract.document.contact,type:"
+msgid "Lessee"
+msgstr "Arrendatario"
+
+msgctxt "selection:contract.generate.start.contact,type:"
+msgid "Lessor"
+msgstr "Arrendador"
+
+msgctxt "selection:contract.generate.start.contact,type:"
+msgid "Lessee"
+msgstr "Arrendatario"
+
+msgctxt "model:ir.action,name:act_contract_contact_role"
+msgid "Contact Roles"
+msgstr "Roles de contacto"
+
+msgctxt "model:ir.action,name:wizard_generate_contract"
+msgid "Generate Contract Document"
+msgstr "Generar documento de contrato"
+
+msgctxt "model:ir.ui.menu,name:menu_contract_contact_role"
+msgid "Contact Roles"
+msgstr "Roles de contacto"
 
 msgctxt "field:contract.generate.start.attachment,name:"
 msgid "Name"
@@ -409,3 +569,67 @@ msgstr "Manifiestan"
 msgctxt "model:ir.ui.menu,name:menu_contract_party"
 msgid "Parties Texts"
 msgstr "Textos de reunidos"
+
+msgctxt "view:contract:"
+msgid "Attributes"
+msgstr "Atributos"
+
+msgctxt "view:contract:"
+msgid "Document"
+msgstr "Documento"
+
+msgctxt "view:contract:"
+msgid "Lessor"
+msgstr "Arrendador"
+
+msgctxt "view:contract:"
+msgid "Lessee"
+msgstr "Arrendatario"
+
+msgctxt "view:contract.document.base:"
+msgid "Appearances"
+msgstr "Intervienen"
+
+msgctxt "view:contract.document.base:"
+msgid "Clauses"
+msgstr "Cláusulas"
+
+msgctxt "view:contract.document.base:"
+msgid "Parties"
+msgstr "Reunidos"
+
+msgctxt "view:contract.document.base:"
+msgid "Statements"
+msgstr "Manifiestan"
+
+msgctxt "view:contract.generate.start:"
+msgid "Appearances"
+msgstr "Intervienen"
+
+msgctxt "view:contract.generate.start:"
+msgid "Attachments"
+msgstr "Adjuntos"
+
+msgctxt "view:contract.generate.start:"
+msgid "Clauses"
+msgstr "Cláusulas"
+
+msgctxt "view:contract.generate.start:"
+msgid "General"
+msgstr "General"
+
+msgctxt "view:contract.generate.start:"
+msgid "Lessor"
+msgstr "Arrendador"
+
+msgctxt "view:contract.generate.start:"
+msgid "Lessee"
+msgstr "Arrendatario"
+
+msgctxt "view:contract.generate.start:"
+msgid "Parties"
+msgstr "Reunidos"
+
+msgctxt "view:contract.generate.start:"
+msgid "Statements"
+msgstr "Manifiestan"
