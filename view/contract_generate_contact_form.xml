@@ -1,0 +1,15 @@
+<form col="4">
+    <field name="type" invisible="1"/>
+    <label name="name"/>
+    <field name="name"/>
+    <label name="acting_as"/>
+    <field name="acting_as"/>
+    <label name="identifier"/>
+    <field name="identifier"/>
+    <label name="mobile"/>
+    <field name="mobile"/>
+    <label name="email"/>
+    <field name="email" colspan="3"/>
+    <label name="address"/>
+    <field name="address" colspan="3"/>
+</form>

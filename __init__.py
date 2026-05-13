@@ -8,11 +8,16 @@ from . import contract
 def register():
     Pool.register(
         contract.Contract,
+        contract.ContractContactRole,
+        contract.ContractContact,
         contract.ContractClause,
         contract.ContractParty,
         contract.ContractAppearance,
         contract.ContractManifest,
         contract.ContractBase,
+        contract.ContractBaseParty,
+        contract.ContractBaseAppearance,
+        contract.ContractBaseStatement,
         contract.ContractBaseClause,
         contract.ContractGenerateStart,
         contract.ContractGenerateClause,
@@ -20,6 +25,7 @@ def register():
         contract.ContractGenerateAppearance,
         contract.ContractGenerateStatement,
         contract.ContractGenerateAttachment,
+        contract.ContractGenerateContact,
         module='contract_document', type_='model')
     Pool.register(
         contract.ContractGenerateWizard,

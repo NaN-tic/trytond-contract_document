@@ -15,12 +15,14 @@ These variables are exposed as wrapped records, so you can access fields like
 `{{ lessor_contact.rec_name }}`.
 
 - `contract_party`
+- `contract`
 - `company`
 - `lessor_company`
 - `lessor_contact`
 - `payment_type`
 - `bank_account`
 - `lessee_company`
+- `lessee_contact`
 - `asset`
 - `attribute_set`
 - `certificate`
@@ -30,6 +32,9 @@ These variables are exposed as wrapped records, so you can access fields like
 These variables can be iterated.
 
 - `lessee_contacts`
+- `contract_lines`
+- `lessor_document_contacts`
+- `lessee_document_contacts`
 - `attributes`
 - `origin_attachments`
 
@@ -38,6 +43,12 @@ Examples:
 ```jinja2
 {% for contact in lessee_contacts %}
 - {{ contact.rec_name }}
+{% endfor %}
+```
+
+```jinja2
+{% for line in contract_lines %}
+- {{ line.service.rec_name }}: {{ line.quantity }} x {{ line.unit_price }}
 {% endfor %}
 ```
 
@@ -64,10 +75,13 @@ These variables are already converted to plain text and can be printed directly.
 - `company_name`
 - `lessor_company_name`
 - `lessor_contact_name`
+- `lessor_document_contacts_text`
 - `payment_type_name`
 - `bank_account_name`
 - `lessee_company_name`
+- `lessee_contact_name`
 - `lessee_contacts_text`
+- `lessee_document_contacts_text`
 - `start_date_text`
 - `end_date_text`
 - `contract_years_text`
@@ -145,6 +159,9 @@ This document will be digitally signed.
 ## Notes
 
 - `lessee_contacts` contains record objects and supports field access.
+- `lessee_contact` exposes the main lessee party as a single record.
+- `contract` exposes the full contract record, so templates can use
+  `{{ contract.lines[0].service.rec_name }}` and similar expressions.
 - `origin_attachments` contains attachment names as strings.
 - `attributes` is a dictionary.
 - If a variable has no value, it is rendered as an empty value by Jinja2.

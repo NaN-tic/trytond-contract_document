@@ -36,6 +36,40 @@
             <field name="type">tree</field>
             <field name="name">contract_party_list</field>
         </record>
+        <record model="ir.ui.view" id="contract_contact_role_view_tree">
+            <field name="model">contract.document.contact.role</field>
+            <field name="type">tree</field>
+            <field name="name">contract_contact_role_list</field>
+        </record>
+        <record model="ir.ui.view" id="contract_contact_role_view_form">
+            <field name="model">contract.document.contact.role</field>
+            <field name="type">form</field>
+            <field name="name">contract_contact_role_form</field>
+        </record>
+        <record model="ir.action.act_window" id="act_contract_contact_role">
+            <field name="name">Contact Roles</field>
+            <field name="res_model">contract.document.contact.role</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_contract_contact_role_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="contract_contact_role_view_tree"/>
+            <field name="act_window" ref="act_contract_contact_role"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_contract_contact_role_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="contract_contact_role_view_form"/>
+            <field name="act_window" ref="act_contract_contact_role"/>
+        </record>
+        <record model="ir.ui.view" id="contract_contact_view_tree">
+            <field name="model">contract.document.contact</field>
+            <field name="type">tree</field>
+            <field name="name">contract_contact_list</field>
+        </record>
+        <record model="ir.ui.view" id="contract_contact_view_form">
+            <field name="model">contract.document.contact</field>
+            <field name="type">form</field>
+            <field name="name">contract_contact_form</field>
+        </record>
         <record model="ir.ui.view" id="contract_party_view_form">
             <field name="model">contract.document.party</field>
             <field name="type">form</field>
@@ -116,6 +150,21 @@
             <field name="type">form</field>
             <field name="name">contract_base_form</field>
         </record>
+        <record model="ir.ui.view" id="contract_base_party_view_tree">
+            <field name="model">contract.document.base.party</field>
+            <field name="type">tree</field>
+            <field name="name">contract_base_party_list</field>
+        </record>
+        <record model="ir.ui.view" id="contract_base_appearance_view_tree">
+            <field name="model">contract.document.base.appearance</field>
+            <field name="type">tree</field>
+            <field name="name">contract_base_appearance_list</field>
+        </record>
+        <record model="ir.ui.view" id="contract_base_statement_view_tree">
+            <field name="model">contract.document.base.statement</field>
+            <field name="type">tree</field>
+            <field name="name">contract_base_statement_list</field>
+        </record>
         <record model="ir.ui.view" id="contract_base_clause_view_tree">
             <field name="model">contract.document.base.clause</field>
             <field name="type">tree</field>
@@ -191,6 +240,16 @@
             <field name="type">form</field>
             <field name="name">contract_generate_attachment_form</field>
         </record>
+        <record model="ir.ui.view" id="contract_generate_contact_view_tree">
+            <field name="model">contract.generate.start.contact</field>
+            <field name="type">tree</field>
+            <field name="name">contract_generate_contact_list</field>
+        </record>
+        <record model="ir.ui.view" id="contract_generate_contact_view_form">
+            <field name="model">contract.generate.start.contact</field>
+            <field name="type">form</field>
+            <field name="name">contract_generate_contact_form</field>
+        </record>
         <record model="ir.action.wizard" id="wizard_generate_contract">
             <field name="name">Generate Contract Document</field>
             <field name="wiz_name">contract.generate</field>
@@ -231,6 +290,52 @@
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_contact">
+            <field name="model">contract.document.contact</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_contact_group">
+            <field name="model">contract.document.contact</field>
+            <field name="group" ref="contract.group_contract"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_contact_admin">
+            <field name="model">contract.document.contact</field>
+            <field name="group" ref="contract.group_contract_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_contact_role">
+            <field name="model">contract.document.contact.role</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_contact_role_group">
+            <field name="model">contract.document.contact.role</field>
+            <field name="group" ref="contract.group_contract"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_contact_role_admin">
+            <field name="model">contract.document.contact.role</field>
+            <field name="group" ref="contract.group_contract_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
         </record>
         <record model="ir.model.access" id="access_contract_document_party_group">
             <field name="model">contract.document.party</field>
@@ -317,6 +422,75 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
+        <record model="ir.model.access" id="access_contract_document_base_party">
+            <field name="model">contract.document.base.party</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_base_party_group">
+            <field name="model">contract.document.base.party</field>
+            <field name="group" ref="contract.group_contract"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_base_party_admin">
+            <field name="model">contract.document.base.party</field>
+            <field name="group" ref="contract.group_contract_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_base_appearance">
+            <field name="model">contract.document.base.appearance</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_base_appearance_group">
+            <field name="model">contract.document.base.appearance</field>
+            <field name="group" ref="contract.group_contract"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_base_appearance_admin">
+            <field name="model">contract.document.base.appearance</field>
+            <field name="group" ref="contract.group_contract_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_base_statement">
+            <field name="model">contract.document.base.statement</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_base_statement_group">
+            <field name="model">contract.document.base.statement</field>
+            <field name="group" ref="contract.group_contract"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_document_base_statement_admin">
+            <field name="model">contract.document.base.statement</field>
+            <field name="group" ref="contract.group_contract_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
         <record model="ir.model.access" id="access_contract_document_manifest">
             <field name="model">contract.document.manifest</field>
             <field name="perm_read" eval="True"/>
@@ -355,6 +529,11 @@
             sequence="20"
             action="act_contract_party"
             name="Parties Texts"/>
+        <menuitem id="menu_contract_contact_role"
+            parent="menu_contract_document"
+            sequence="25"
+            action="act_contract_contact_role"
+            name="Contact Roles"/>
         <menuitem id="menu_contract_appearance"
             parent="menu_contract_document"
             sequence="30"
