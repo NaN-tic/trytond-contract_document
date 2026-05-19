@@ -1,5 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
+from decimal import Decimal
 from html.parser import HTMLParser
 
 import markdown
@@ -7,6 +8,12 @@ import markdown
 
 def safe_text(value):
     return '' if value is None else str(value)
+
+
+def template_value(value):
+    if isinstance(value, Decimal):
+        return float(value)
+    return value
 
 
 class SafeDict(dict):
@@ -21,7 +28,7 @@ class TemplateRecord:
         self._record = record
 
     def __getattr__(self, name):
-        return getattr(self._record, name)
+        return template_value(getattr(self._record, name))
 
     def __str__(self):
         return safe_text(getattr(self._record, 'rec_name', self._record))

@@ -80,3 +80,20 @@ class TestGenerateContract(unittest.TestCase):
         self.assertIn('w:spacing w:after=\"0\" w:line=\"240\"', document_xml)
         self.assertNotIn('CLAUSES', document_xml)
         self.assertNotIn('Clause Title', document_xml)
+
+        wizard = Wizard('contract.generate', [vars.contract])
+        wizard.form.lessor_company = vars.lessor
+        wizard.form.lessor_contact = vars.lessor
+        wizard.form.contract_base = vars.contract_base
+        wizard.form.lessee_company = None
+        wizard.form.lessee_contacts = None
+        while wizard.form.lessee_document_contacts:
+            wizard.form.lessee_document_contacts.pop()
+        wizard.execute('generate')
+
+        attachments = Attachment.find([('resource', '=', vars.contract)])
+        self.assertEqual(len(attachments), 2)
+        attachment = attachments[-1]
+        with zipfile.ZipFile(io.BytesIO(bytes(attachment.data)), 'r') as docx:
+            document_xml = docx.read('word/document.xml').decode('utf-8')
+        self.assertIn('Computed 1450.0', document_xml)

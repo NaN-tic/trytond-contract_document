@@ -21,7 +21,8 @@ from trytond.transaction import Transaction
 from trytond.wizard import Button, StateTransition, StateView, Wizard
 from trytond.exceptions import UserError
 
-from .tools import SafeDict, TemplateRecord, markdown_to_paragraphs, safe_text
+from .tools import (SafeDict, TemplateRecord, markdown_to_paragraphs,
+    safe_text, template_value)
 
 
 class Contract(metaclass=PoolMeta):
@@ -741,6 +742,10 @@ class ContractGenerateWizard(Wizard):
     def _write_back_contract(self, contract):
         pool = Pool()
         Contact = pool.get('contract.document.contact')
+
+        def line_value(line, name, default=None):
+            return getattr(line, name, default)
+
         contract.cadastre = self.start.cadastre
         contract.document_attribute_set = self.start.attribute_set
         contract.document_attributes = self.start.attributes or {}
@@ -763,12 +768,12 @@ class ContractGenerateWizard(Wizard):
                         'sequence': index,
                         'type': contact_type,
                         'name': line.name,
-                        'identifier': line.identifier,
-                        'address': line.address,
-                        'mobile': line.mobile,
-                        'email': line.email,
-                        'acting_as': (line.acting_as.id
-                            if line.acting_as else None),
+                        'identifier': line_value(line, 'identifier'),
+                        'address': line_value(line, 'address'),
+                        'mobile': line_value(line, 'mobile'),
+                        'email': line_value(line, 'email'),
+                        'acting_as': (line_value(line, 'acting_as').id
+                            if line_value(line, 'acting_as') else None),
                         })
         if to_create:
             Contact.create(to_create)
@@ -855,17 +860,18 @@ class ContractGenerateWizard(Wizard):
                 'start_date_text': safe_text(self.start.start_date),
                 'end_date': self.start.end_date,
                 'end_date_text': safe_text(self.start.end_date),
-                'contract_years': self.start.contract_years,
+                'contract_years': template_value(self.start.contract_years),
                 'contract_years_text': safe_text(self.start.contract_years),
                 'asset': TemplateRecord(asset) if asset else '',
                 'asset_name': safe_text(asset.rec_name if asset else ''),
                 'asset_address': self._get_asset_address(asset) or '; '.join(addresses),
                 'deposit': safe_text(self.start.deposit),
-                'deposit_value': self.start.deposit,
+                'deposit_value': template_value(self.start.deposit),
                 'guarantee_amount': safe_text(self.start.guarantee_amount),
-                'guarantee_amount_value': self.start.guarantee_amount,
+                'guarantee_amount_value': template_value(
+                    self.start.guarantee_amount),
                 'amount': safe_text(self.start.amount),
-                'amount_value': self.start.amount,
+                'amount_value': template_value(self.start.amount),
                 'cadastre': safe_text(self.start.cadastre),
                 'home_assessment': safe_text(self.start.home_assessment),
                 'energy_certificate': safe_text(
