@@ -146,7 +146,9 @@ def setup():
     ContractManifest = Model.get('contract.document.manifest')
     statement = ContractManifest(name='internal-statement')
     statement.title = 'Statement Title'
-    statement.content = 'Years {{ contract_years_text }}'
+    statement.content = (
+        'Years {{ contract_years_text }}\n'
+        'Computed {{ (amount_value + 0.0) if not lessee_company else amount_value }}')
     statement.save()
 
     ContractBase = Model.get('contract.document.base')
