@@ -3,6 +3,7 @@
     <field name="name"/>
     <field name="acting_as"/>
     <field name="identifier"/>
+    <field name="address" tree_invisible="1"/>
     <field name="mobile"/>
     <field name="email"/>
 </tree>
