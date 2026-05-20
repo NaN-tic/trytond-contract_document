@@ -131,6 +131,7 @@ def setup():
     party_text.content = (
         'Lessor {{ lessor_company_name }}\n'
         'Contact {{ lessor_contact_name }}\n'
+        'Line Type {{ contract.lines[0].line_type.rec_name }}\n'
         'Service {{ contract.lines[0].service.rec_name }}\n'
         'Quantity {{ contract.lines[0].quantity }}')
     party_text.save()
@@ -166,6 +167,8 @@ def setup():
     ContactRole = Model.get('contract.document.contact.role')
     contact_role = ContactRole(name='Tenant')
     contact_role.save()
+    ContractLineType = Model.get('contract.line.type')
+    rent_line_type, = ContractLineType.find([('name', '=', 'Rent')])
 
     Contract = Model.get('contract')
     contract = Contract()
@@ -181,6 +184,7 @@ def setup():
     line = contract.lines.new()
     line.service = service
     line.asset = asset
+    line.line_type = rent_line_type
     line.unit_price = Decimal('750')
     line.quantity = 2
     line.unit = unit

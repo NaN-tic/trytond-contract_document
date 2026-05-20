@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<data>
+    <xpath expr="/tree/field[@name='service']" position="after">
+        <field name="line_type"/>
+    </xpath>
+</data>

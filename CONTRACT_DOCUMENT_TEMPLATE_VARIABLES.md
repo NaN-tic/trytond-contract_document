@@ -48,7 +48,7 @@ Examples:
 
 ```jinja2
 {% for line in contract_lines %}
-- {{ line.service.rec_name }}: {{ line.quantity }} x {{ line.unit_price }}
+- {{ line.line_type.rec_name }} - {{ line.service.rec_name }}: {{ line.quantity }} x {{ line.unit_price }}
 {% endfor %}
 ```
 
@@ -151,6 +151,10 @@ Guarantee amount: {{ guarantee_amount }}
 ```
 
 ```jinja2
+Main line type: {{ contract.lines[0].line_type.rec_name }}
+```
+
+```jinja2
 {% if sign_digitally %}
 This document will be digitally signed.
 {% endif %}
@@ -161,7 +165,8 @@ This document will be digitally signed.
 - `lessee_contacts` contains record objects and supports field access.
 - `lessee_contact` exposes the main lessee party as a single record.
 - `contract` exposes the full contract record, so templates can use
-  `{{ contract.lines[0].service.rec_name }}` and similar expressions.
+  `{{ contract.lines[0].service.rec_name }}`,
+  `{{ contract.lines[0].line_type.rec_name }}` and similar expressions.
 - `origin_attachments` contains attachment names as strings.
 - `attributes` is a dictionary.
 - If a variable has no value, it is rendered as an empty value by Jinja2.
