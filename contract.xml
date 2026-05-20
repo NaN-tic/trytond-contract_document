@@ -6,6 +6,40 @@
             <field name="inherit" ref="contract.contract_view_form"/>
             <field name="name">contract_form</field>
         </record>
+        <record model="ir.ui.view" id="contract_line_view_list_sequence">
+            <field name="model">contract.line</field>
+            <field name="inherit" ref="contract.contract_line_view_list_sequence"/>
+            <field name="name">contract_line_list_sequence</field>
+        </record>
+        <record model="ir.ui.view" id="contract_line_view_form">
+            <field name="model">contract.line</field>
+            <field name="inherit" ref="contract.contract_line_view_form"/>
+            <field name="name">contract_line_form</field>
+        </record>
+        <record model="ir.ui.view" id="contract_line_type_view_tree">
+            <field name="model">contract.line.type</field>
+            <field name="type">tree</field>
+            <field name="name">contract_line_type_list</field>
+        </record>
+        <record model="ir.ui.view" id="contract_line_type_view_form">
+            <field name="model">contract.line.type</field>
+            <field name="type">form</field>
+            <field name="name">contract_line_type_form</field>
+        </record>
+        <record model="ir.action.act_window" id="act_contract_line_type">
+            <field name="name">Line Types</field>
+            <field name="res_model">contract.line.type</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_contract_line_type_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="contract_line_type_view_tree"/>
+            <field name="act_window" ref="act_contract_line_type"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_contract_line_type_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="contract_line_type_view_form"/>
+            <field name="act_window" ref="act_contract_line_type"/>
+        </record>
 
         <record model="ir.ui.view" id="contract_clause_view_tree">
             <field name="model">contract.document.clause</field>
@@ -337,6 +371,29 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
+        <record model="ir.model.access" id="access_contract_line_type">
+            <field name="model">contract.line.type</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_line_type_group">
+            <field name="model">contract.line.type</field>
+            <field name="group" ref="contract.group_contract"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_contract_line_type_admin">
+            <field name="model">contract.line.type</field>
+            <field name="group" ref="contract.group_contract_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
         <record model="ir.model.access" id="access_contract_document_party_group">
             <field name="model">contract.document.party</field>
             <field name="group" ref="contract.group_contract"/>
@@ -534,6 +591,11 @@
             sequence="25"
             action="act_contract_contact_role"
             name="Contact Roles"/>
+        <menuitem id="menu_contract_line_type"
+            parent="menu_contract_document"
+            sequence="27"
+            action="act_contract_line_type"
+            name="Line Types"/>
         <menuitem id="menu_contract_appearance"
             parent="menu_contract_document"
             sequence="30"
@@ -549,5 +611,45 @@
             sequence="50"
             action="act_contract_base"
             name="Base Contracts"/>
+
+        <record model="contract.line.type" id="contract_line_type_rent">
+            <field name="name">Rent</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_discount">
+            <field name="name">Discount</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_rebilled_ibi">
+            <field name="name">Rebilled Property Tax</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_rebilled_community_expenses">
+            <field name="name">Rebilled Community Expenses</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_waste_tax">
+            <field name="name">Waste Tax</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_waste_management">
+            <field name="name">Waste Management</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_concierge">
+            <field name="name">Concierge</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_stair_cleaning">
+            <field name="name">Stair Cleaning</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_driveway_tax">
+            <field name="name">Driveway Tax</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_rebilled_supplies">
+            <field name="name">Rebilled Supplies</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_rebilled_water">
+            <field name="name">Rebilled Water</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_rebilled_electricity">
+            <field name="name">Rebilled Electricity</field>
+        </record>
+        <record model="contract.line.type" id="contract_line_type_rebilled_gas">
+            <field name="name">Rebilled Gas</field>
+        </record>
     </data>
 </tryton>

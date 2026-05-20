@@ -70,6 +70,7 @@ class TestGenerateContract(unittest.TestCase):
         self.assertIn('PARTIES', document_xml)
         self.assertIn('Party Title', document_xml)
         self.assertIn('Lessor Company', document_xml)
+        self.assertIn('Line Type Rent', document_xml)
         self.assertIn('Appearance Title', document_xml)
         self.assertIn('Receivable', document_xml)
         self.assertIn('ES76 2077 0024 0031 0257 5766', document_xml)

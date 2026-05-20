@@ -1,0 +1,4 @@
+<form col="4">
+    <label name="name"/>
+    <field name="name" colspan="3"/>
+</form>

@@ -34,6 +34,14 @@ msgctxt "field:contract,lessee_document_contacts:"
 msgid "Lessee Persons"
 msgstr "Personas arrendatarias"
 
+msgctxt "field:contract.line,line_type:"
+msgid "Line Type"
+msgstr "Tipo de línea"
+
+msgctxt "field:contract.line.type,name:"
+msgid "Name"
+msgstr "Nombre"
+
 msgctxt "field:contract.document.contact,contract:"
 msgid "Contract"
 msgstr "Contrato"
@@ -410,6 +418,10 @@ msgctxt "model:ir.action,name:act_contract_contact_role"
 msgid "Contact Roles"
 msgstr "Roles de contacto"
 
+msgctxt "model:ir.action,name:act_contract_line_type"
+msgid "Line Types"
+msgstr "Tipos de línea"
+
 msgctxt "model:ir.action,name:wizard_generate_contract"
 msgid "Generate Contract Document"
 msgstr "Generar documento de contrato"
@@ -417,6 +429,62 @@ msgstr "Generar documento de contrato"
 msgctxt "model:ir.ui.menu,name:menu_contract_contact_role"
 msgid "Contact Roles"
 msgstr "Roles de contacto"
+
+msgctxt "model:ir.ui.menu,name:menu_contract_line_type"
+msgid "Line Types"
+msgstr "Tipos de línea"
+
+msgctxt "model:contract.line.type,name:contract_line_type_rent"
+msgid "Rent"
+msgstr "Renta"
+
+msgctxt "model:contract.line.type,name:contract_line_type_discount"
+msgid "Discount"
+msgstr "Bonificación"
+
+msgctxt "model:contract.line.type,name:contract_line_type_rebilled_ibi"
+msgid "Rebilled Property Tax"
+msgstr "IBI repercutido"
+
+msgctxt "model:contract.line.type,name:contract_line_type_rebilled_community_expenses"
+msgid "Rebilled Community Expenses"
+msgstr "Gastos de comunidad repercutidos"
+
+msgctxt "model:contract.line.type,name:contract_line_type_waste_tax"
+msgid "Waste Tax"
+msgstr "Tasa de basuras"
+
+msgctxt "model:contract.line.type,name:contract_line_type_waste_management"
+msgid "Waste Management"
+msgstr "Gestión de residuos"
+
+msgctxt "model:contract.line.type,name:contract_line_type_concierge"
+msgid "Concierge"
+msgstr "Portería"
+
+msgctxt "model:contract.line.type,name:contract_line_type_stair_cleaning"
+msgid "Stair Cleaning"
+msgstr "Limpieza escalera"
+
+msgctxt "model:contract.line.type,name:contract_line_type_driveway_tax"
+msgid "Driveway Tax"
+msgstr "Tasa de vado"
+
+msgctxt "model:contract.line.type,name:contract_line_type_rebilled_supplies"
+msgid "Rebilled Supplies"
+msgstr "Suministros repercutidos"
+
+msgctxt "model:contract.line.type,name:contract_line_type_rebilled_water"
+msgid "Rebilled Water"
+msgstr "Agua repercutida"
+
+msgctxt "model:contract.line.type,name:contract_line_type_rebilled_electricity"
+msgid "Rebilled Electricity"
+msgstr "Luz repercutida"
+
+msgctxt "model:contract.line.type,name:contract_line_type_rebilled_gas"
+msgid "Rebilled Gas"
+msgstr "Gas repercutido"
 
 msgctxt "field:contract.generate.start.attachment,name:"
 msgid "Name"
