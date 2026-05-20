@@ -9,6 +9,8 @@ def register():
     Pool.register(
         contract.Contract,
         contract.ContractContactRole,
+        contract.ContractLineType,
+        contract.ContractLine,
         contract.ContractContact,
         contract.ContractClause,
         contract.ContractParty,

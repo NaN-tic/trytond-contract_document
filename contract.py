@@ -65,6 +65,22 @@ class ContractContactRole(ModelSQL, ModelView):
         return self.name
 
 
+class ContractLineType(ModelSQL, ModelView):
+    'Contract Line Type'
+    __name__ = 'contract.line.type'
+
+    name = fields.Char('Name', required=True, translate=True)
+
+    def get_rec_name(self, name):
+        return self.name
+
+
+class ContractLine(metaclass=PoolMeta):
+    __name__ = 'contract.line'
+
+    line_type = fields.Many2One('contract.line.type', 'Line Type')
+
+
 class ContractContact(sequence_ordered(), ModelSQL, ModelView):
     'Contract Document Contact'
     __name__ = 'contract.document.contact'
