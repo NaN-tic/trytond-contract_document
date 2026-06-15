@@ -12,6 +12,7 @@ import zipfile
 from xml.sax.saxutils import escape
 
 from jinja2 import ChainableUndefined, Environment
+from jinja2.exceptions import TemplateError
 from trytond.i18n import gettext
 from trytond.model import (
     ModelSQL, ModelView, fields, sequence_ordered, tree)
@@ -968,8 +969,13 @@ class ContractGenerateWizard(Wizard):
             undefined=ChainableUndefined,
             trim_blocks=False,
             lstrip_blocks=False)
-        template = environment.from_string(source)
-        return template.render(**context)
+        try:
+            template = environment.from_string(source)
+            return template.render(**context)
+        except (TemplateError, TypeError, ValueError) as exc:
+            raise UserError(gettext(
+                'contract_document.msg_invalid_jinja_expression',
+                error='%s: %s' % (exc.__class__.__name__, exc))) from exc
 
     def _build_docx(self, context):
         paragraphs = []

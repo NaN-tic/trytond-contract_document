@@ -5,6 +5,7 @@ from decimal import Decimal
 
 from proteus import Model, Wizard
 from trytond.modules.contract_document.tests.tools import setup
+from trytond.exceptions import UserError
 from trytond.tests.test_tryton import drop_db
 
 
@@ -98,3 +99,12 @@ class TestGenerateContract(unittest.TestCase):
         with zipfile.ZipFile(io.BytesIO(bytes(attachment.data)), 'r') as docx:
             document_xml = docx.read('word/document.xml').decode('utf-8')
         self.assertIn('Computed 1450.0', document_xml)
+
+        wizard = Wizard('contract.generate', [vars.contract])
+        wizard.form.lessor_company = vars.lessor
+        wizard.form.lessor_contact = vars.lessor
+        wizard.form.contract_base = vars.contract_base
+        wizard.form.statements[0].content = '{{ contract.lines[1].asset * 1.0 }}'
+        with self.assertRaisesRegex(
+                UserError, 'invalid Jinja expression: TypeError:'):
+            wizard.execute('generate')
