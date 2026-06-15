@@ -602,6 +602,10 @@ msgctxt "model:ir.message,text:msg_missing_clauses"
 msgid "At least one clause is required to generate the contract document."
 msgstr "Cal almenys una clàusula per generar el document del contracte."
 
+msgctxt "model:ir.message,text:msg_invalid_jinja_expression"
+msgid "The contract document contains an invalid Jinja expression: %(error)s"
+msgstr "El document del contracte conté una expressió Jinja invàlida: %(error)s"
+
 msgctxt "model:ir.message,text:msg_missing_pyhanko"
 msgid "Digital signing requires the Python package \"pyhanko\" to be installed on the server."
 msgstr "La signatura digital requereix que el paquet Python \"pyhanko\" estigui instal·lat al servidor."
