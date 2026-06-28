@@ -65,6 +65,11 @@
             <field name="view" ref="contract_clause_view_form"/>
             <field name="act_window" ref="act_contract_clause"/>
         </record>
+        <record model="ir.model.button" id="contract_clause_validate_jinja_button">
+            <field name="name">validate_jinja</field>
+            <field name="string">Validate Jinja</field>
+            <field name="model">contract.document.clause</field>
+        </record>
         <record model="ir.ui.view" id="contract_party_view_tree">
             <field name="model">contract.document.party</field>
             <field name="type">tree</field>
@@ -123,6 +128,11 @@
             <field name="view" ref="contract_party_view_form"/>
             <field name="act_window" ref="act_contract_party"/>
         </record>
+        <record model="ir.model.button" id="contract_party_validate_jinja_button">
+            <field name="name">validate_jinja</field>
+            <field name="string">Validate Jinja</field>
+            <field name="model">contract.document.party</field>
+        </record>
 
         <record model="ir.ui.view" id="contract_appearance_view_tree">
             <field name="model">contract.document.appearance</field>
@@ -148,6 +158,11 @@
             <field name="view" ref="contract_appearance_view_form"/>
             <field name="act_window" ref="act_contract_appearance"/>
         </record>
+        <record model="ir.model.button" id="contract_appearance_validate_jinja_button">
+            <field name="name">validate_jinja</field>
+            <field name="string">Validate Jinja</field>
+            <field name="model">contract.document.appearance</field>
+        </record>
 
         <record model="ir.ui.view" id="contract_manifest_view_tree">
             <field name="model">contract.document.manifest</field>
@@ -172,6 +187,11 @@
             <field name="sequence" eval="20"/>
             <field name="view" ref="contract_manifest_view_form"/>
             <field name="act_window" ref="act_contract_manifest"/>
+        </record>
+        <record model="ir.model.button" id="contract_manifest_validate_jinja_button">
+            <field name="name">validate_jinja</field>
+            <field name="string">Validate Jinja</field>
+            <field name="model">contract.document.manifest</field>
         </record>
 
         <record model="ir.ui.view" id="contract_base_view_tree">
@@ -217,6 +237,11 @@
             <field name="sequence" eval="20"/>
             <field name="view" ref="contract_base_view_form"/>
             <field name="act_window" ref="act_contract_base"/>
+        </record>
+        <record model="ir.model.button" id="contract_base_validate_jinja_button">
+            <field name="name">validate_jinja</field>
+            <field name="string">Validate Jinja</field>
+            <field name="model">contract.document.base</field>
         </record>
 
         <record model="ir.ui.view" id="contract_generate_start_view_form">
