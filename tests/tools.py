@@ -154,6 +154,7 @@ def setup():
 
     ContractBase = Model.get('contract.document.base')
     contract_base = ContractBase(name='Lease Base')
+    contract_base.contract_title = 'Base Contract {{ contract_number }}'
     base_party = contract_base.parties.new()
     base_party.party = party_text
     base_appearance = contract_base.appearances.new()
