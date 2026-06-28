@@ -23,6 +23,7 @@ class TestGenerateContract(unittest.TestCase):
         vars = setup()
 
         Attachment = Model.get('ir.attachment')
+        ContractBase = Model.get('contract.document.base')
 
         wizard = Wizard('contract.generate', [vars.contract])
         self.assertEqual(wizard.form.payment_type, vars.payment_type)
@@ -32,10 +33,18 @@ class TestGenerateContract(unittest.TestCase):
         self.assertEqual(wizard.form.end_date.isoformat(), '2016-01-01')
         self.assertEqual(wizard.form.contract_years, Decimal('1.00'))
         self.assertEqual(wizard.form.amount, Decimal('1450.00'))
+        default_contract_title = wizard.form.contract_title
+
+        blank_contract_base = ContractBase(name='Blank Base')
+        blank_contract_base.save()
+        wizard.form.contract_base = blank_contract_base
+        self.assertEqual(wizard.form.contract_title, default_contract_title)
 
         wizard.form.lessor_company = vars.lessor
         wizard.form.lessor_contact = vars.lessor
         wizard.form.contract_base = vars.contract_base
+        self.assertEqual(wizard.form.contract_title,
+            'Base Contract {{ contract_number }}')
 
         self.assertEqual(len(wizard.form.parties), 1)
         self.assertEqual(len(wizard.form.clauses), 1)
