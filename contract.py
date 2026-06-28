@@ -140,6 +140,9 @@ class ContractBase(ModelSQL, ModelView):
     __name__ = 'contract.document.base'
 
     name = fields.Char('Name', required=True)
+    contract_title = fields.Char('Contract Title', translate=True,
+        help='Supports Jinja2 placeholders like {{ contract_number }} '
+        'or {{ asset_name }}.')
     parties = fields.One2Many('contract.document.base.party', 'base',
         'Parties')
     appearances = fields.One2Many('contract.document.base.appearance', 'base',
@@ -477,8 +480,8 @@ class ContractGenerateStart(ModelView):
     def default_clauses_title():
         return gettext('contract_document.msg_default_clauses_title')
 
-    @fields.depends('contract_base', 'parties', 'appearances', 'statements',
-        'clauses')
+    @fields.depends('contract_base', 'contract_title', 'parties',
+        'appearances', 'statements', 'clauses')
     def on_change_contract_base(self):
         pool = Pool()
         ClauseLine = pool.get('contract.generate.start.clause')
@@ -487,6 +490,8 @@ class ContractGenerateStart(ModelView):
         StatementLine = pool.get('contract.generate.start.statement')
         if not self.contract_base:
             return
+        if self.contract_base.contract_title:
+            self.contract_title = self.contract_base.contract_title
         if self.contract_base.parties:
             parties = []
             for index, line in enumerate(sorted(self.contract_base.parties,
