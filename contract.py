@@ -26,6 +26,83 @@ from .tools import (SafeDict, TemplateRecord, markdown_to_paragraphs,
     safe_text, template_value)
 
 
+def get_jinja_environment():
+    return Environment(
+        autoescape=False,
+        undefined=ChainableUndefined,
+        trim_blocks=False,
+        lstrip_blocks=False)
+
+
+def get_jinja_error(location, exc, kind):
+    return UserError(
+        'The contract document contains an invalid Jinja %s in %s: %s: %s'
+        % (kind, location, exc.__class__.__name__, exc))
+
+
+def get_jinja_syntax_error(location, exc):
+    return get_jinja_error(location, exc, 'syntax')
+
+
+def build_jinja_location(section, field, name=None):
+    location = section
+    if name:
+        location = '%s "%s"' % (location, name)
+    return '%s / %s' % (location, field)
+
+
+def validate_jinja_source(source, location):
+    source = (source or '').replace('\r\n', '\n')
+    try:
+        return get_jinja_environment().from_string(source)
+    except TemplateError as exc:
+        raise get_jinja_syntax_error(location, exc)
+
+
+def render_jinja_source(source, context, location):
+    template = validate_jinja_source(source, location)
+    try:
+        return template.render(**context)
+    except (TemplateError, TypeError, ValueError) as exc:
+        raise get_jinja_error(location, exc, 'expression')
+
+
+class JinjaValidationMixin:
+    __slots__ = ()
+
+    _jinja_section_name = None
+
+    @classmethod
+    def __setup__(cls):
+        super().__setup__()
+        cls._buttons.update({
+                'validate_jinja': {},
+                })
+
+    @classmethod
+    @ModelView.button
+    def validate_jinja(cls, records):
+        for record in records:
+            record._validate_jinja_fields()
+
+    def _get_jinja_section_name(self):
+        return self._jinja_section_name or self.__doc__ or self.__name__
+
+    def _get_jinja_validation_fields(self):
+        return [('content', 'content')]
+
+    def _get_jinja_record_name(self):
+        return safe_text(getattr(self, 'rec_name', None)).strip() or None
+
+    def _validate_jinja_fields(self):
+        name = self._get_jinja_record_name()
+        section = self._get_jinja_section_name()
+        for field_name, field_label in self._get_jinja_validation_fields():
+            validate_jinja_source(
+                getattr(self, field_name, None),
+                build_jinja_location(section, field_label, name=name))
+
+
 class Contract(metaclass=PoolMeta):
     __name__ = 'contract'
 
@@ -109,9 +186,11 @@ class ContractContact(sequence_ordered(), ModelSQL, ModelView):
 
 
 class ContractClause(
+        JinjaValidationMixin,
         tree(separator=' / '), sequence_ordered(), ModelSQL, ModelView):
     'Contract Clause'
     __name__ = 'contract.document.clause'
+    _jinja_section_name = 'Contract Clause'
 
     name = fields.Char('Name', required=True)
     title = fields.Char('Title', translate=True)
@@ -135,9 +214,10 @@ class ContractClause(
         return self.name
 
 
-class ContractBase(ModelSQL, ModelView):
+class ContractBase(JinjaValidationMixin, ModelSQL, ModelView):
     'Contract Base'
     __name__ = 'contract.document.base'
+    _jinja_section_name = 'Contract Base'
 
     name = fields.Char('Name', required=True)
     contract_title = fields.Char('Contract Title', translate=True,
@@ -151,6 +231,9 @@ class ContractBase(ModelSQL, ModelView):
         'Statements')
     clauses = fields.One2Many('contract.document.base.clause', 'base',
         'Clauses')
+
+    def _get_jinja_validation_fields(self):
+        return [('contract_title', 'contract title')]
 
 
 class ContractBaseParty(sequence_ordered(), ModelSQL, ModelView):
@@ -195,9 +278,11 @@ class ContractBaseClause(sequence_ordered(), ModelSQL, ModelView):
             ])
 
 
-class ContractManifest(sequence_ordered(), ModelSQL, ModelView):
+class ContractManifest(
+        JinjaValidationMixin, sequence_ordered(), ModelSQL, ModelView):
     'Contract Manifest'
     __name__ = 'contract.document.manifest'
+    _jinja_section_name = 'Contract Manifest'
 
     name = fields.Char('Name', required=True)
     title = fields.Char('Title', translate=True)
@@ -211,9 +296,11 @@ class ContractManifest(sequence_ordered(), ModelSQL, ModelView):
         return True
 
 
-class ContractParty(sequence_ordered(), ModelSQL, ModelView):
+class ContractParty(
+        JinjaValidationMixin, sequence_ordered(), ModelSQL, ModelView):
     'Contract Party Text'
     __name__ = 'contract.document.party'
+    _jinja_section_name = 'Contract Party Text'
 
     name = fields.Char('Name', required=True)
     title = fields.Char('Title', translate=True)
@@ -227,9 +314,11 @@ class ContractParty(sequence_ordered(), ModelSQL, ModelView):
         return True
 
 
-class ContractAppearance(sequence_ordered(), ModelSQL, ModelView):
+class ContractAppearance(
+        JinjaValidationMixin, sequence_ordered(), ModelSQL, ModelView):
     'Contract Appearance Text'
     __name__ = 'contract.document.appearance'
+    _jinja_section_name = 'Contract Appearance Text'
 
     name = fields.Char('Name', required=True, translate=True)
     title = fields.Char('Title', translate=True)
@@ -968,42 +1057,46 @@ class ContractGenerateWizard(Wizard):
         return ', '.join(x for x in parts if x)
 
     def _render_text(self, text, context):
-        source = (text or '').replace('\r\n', '\n')
-        environment = Environment(
-            autoescape=False,
-            undefined=ChainableUndefined,
-            trim_blocks=False,
-            lstrip_blocks=False)
-        try:
-            template = environment.from_string(source)
-            return template.render(**context)
-        except (TemplateError, TypeError, ValueError) as exc:
-            raise UserError(gettext(
-                'contract_document.msg_invalid_jinja_expression',
-                error='%s: %s' % (exc.__class__.__name__, exc))) from exc
+        return render_jinja_source(text, context, 'Document / content')
+
+    def _render_template_field(self, text, context, section, field, name=None):
+        return render_jinja_source(
+            text, context, build_jinja_location(section, field, name=name))
+
+    def _get_related_record_name(self, section_line, field_name, fallback=None):
+        record = getattr(section_line, field_name, None)
+        if record:
+            return safe_text(record.rec_name).strip() or None
+        return safe_text(fallback).strip() or None
 
     def _build_docx(self, context):
         paragraphs = []
         if self.start.contract_title:
+            rendered_contract_title = self._render_template_field(
+                self.start.contract_title, context, 'Contract', 'title')
             paragraphs.append({
-                    'text': self.start.contract_title,
+                    'text': rendered_contract_title,
                     'bold': True,
                     'center': True,
                     })
             paragraphs.append({'text': ''})
 
         self._append_line_section(paragraphs, self.start.parties_title,
-            self.start.parties, context)
+            self.start.parties, context, 'Party', 'party')
         self._append_line_section(paragraphs, self.start.appearances_title,
-            self.start.appearances, context)
+            self.start.appearances, context, 'Appearance', 'appearance')
 
         rendered_statements = []
         for statement in sorted(self.start.statements,
                 key=lambda l: ((l.sequence is None), l.sequence or 0,
                     l.id or 0)):
+            name = self._get_related_record_name(
+                statement, 'statement', fallback=statement.title)
             rendered_statements.append({
                     'title': statement.title,
-                    'content': self._render_text(statement.content, context),
+                    'content': self._render_template_field(
+                        statement.content, context, 'Statement', 'content',
+                        name=name),
                     })
         rendered_statements = [s for s in rendered_statements
             if (s['title'] and s['title'].strip())
@@ -1034,7 +1127,9 @@ class ContractGenerateWizard(Wizard):
         for clause in ordered_clauses:
             rendered_clauses.append({
                     'title': clause.title,
-                    'content': self._render_text(clause.content, context),
+                    'content': self._render_template_field(
+                        clause.content, context, 'Clause', 'content',
+                        name=safe_text(clause.rec_name).strip() or None),
                     })
         rendered_clauses = [c for c in rendered_clauses
             if (c['title'] and c['title'].strip())
@@ -1058,14 +1153,19 @@ class ContractGenerateWizard(Wizard):
 
         return self._create_docx(paragraphs)
 
-    def _append_line_section(self, paragraphs, title, lines, context):
+    def _append_line_section(self, paragraphs, title, lines, context,
+            section, relation_field):
         rendered_lines = []
         for section_line in sorted(lines,
                 key=lambda l: ((l.sequence is None), l.sequence or 0,
                     l.id or 0)):
+            name = self._get_related_record_name(
+                section_line, relation_field, fallback=section_line.title)
             rendered_lines.append({
                     'title': section_line.title,
-                    'content': self._render_text(section_line.content, context),
+                    'content': self._render_template_field(
+                        section_line.content, context, section, 'content',
+                        name=name),
                     })
         rendered_lines = [line for line in rendered_lines
             if (line['title'] and line['title'].strip())

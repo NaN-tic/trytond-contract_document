@@ -138,6 +138,10 @@ msgctxt "field:contract.document.base,name:"
 msgid "Name"
 msgstr "Nombre"
 
+msgctxt "field:contract.document.base,contract_title:"
+msgid "Contract Title"
+msgstr "Título del contrato"
+
 msgctxt "field:contract.document.base.clause,base:"
 msgid "Base"
 msgstr "Base"
@@ -553,6 +557,30 @@ msgstr "Admite placeholders de Jinja2 como {{ lessor_company }} o {{ asset_addre
 msgctxt "help:contract.document.party,content:"
 msgid "Supports Jinja2 placeholders like {{ lessor_company }} or {{ asset_address }}."
 msgstr "Admite placeholders de Jinja2 como {{ lessor_company }} o {{ asset_address }}."
+
+msgctxt "help:contract.document.base,contract_title:"
+msgid "Supports Jinja2 placeholders like {{ contract_number }} or {{ asset_name }}."
+msgstr "Admite placeholders de Jinja2 como {{ contract_number }} o {{ asset_name }}."
+
+msgctxt "model:ir.model.button,string:contract_appearance_validate_jinja_button"
+msgid "Validate Jinja"
+msgstr "Validar Jinja"
+
+msgctxt "model:ir.model.button,string:contract_base_validate_jinja_button"
+msgid "Validate Jinja"
+msgstr "Validar Jinja"
+
+msgctxt "model:ir.model.button,string:contract_clause_validate_jinja_button"
+msgid "Validate Jinja"
+msgstr "Validar Jinja"
+
+msgctxt "model:ir.model.button,string:contract_manifest_validate_jinja_button"
+msgid "Validate Jinja"
+msgstr "Validar Jinja"
+
+msgctxt "model:ir.model.button,string:contract_party_validate_jinja_button"
+msgid "Validate Jinja"
+msgstr "Validar Jinja"
 
 msgctxt "model:ir.action,name:act_contract_appearance"
 msgid "Appearances Texts"

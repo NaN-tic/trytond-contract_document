@@ -1,6 +1,7 @@
 <form col="4">
     <label name="name"/>
     <field name="name"/>
+    <button name="validate_jinja" colspan="2"/>
     <label name="title"/>
     <field name="title"/>
     <label name="sequence"/>

@@ -24,6 +24,7 @@ class TestGenerateContract(unittest.TestCase):
 
         Attachment = Model.get('ir.attachment')
         ContractBase = Model.get('contract.document.base')
+        ContractManifest = Model.get('contract.document.manifest')
 
         wizard = Wizard('contract.generate', [vars.contract])
         self.assertEqual(wizard.form.payment_type, vars.payment_type)
@@ -77,6 +78,9 @@ class TestGenerateContract(unittest.TestCase):
         with zipfile.ZipFile(io.BytesIO(bytes(attachment.data)), 'r') as docx:
             document_xml = docx.read('word/document.xml').decode('utf-8')
 
+        self.assertIn('Base Contract', document_xml)
+        self.assertIn(vars.contract.number, document_xml)
+        self.assertNotIn('Base Contract {{ contract_number }}', document_xml)
         self.assertIn('PARTIES', document_xml)
         self.assertIn('Party Title', document_xml)
         self.assertIn('Lessor Company', document_xml)
@@ -109,11 +113,20 @@ class TestGenerateContract(unittest.TestCase):
             document_xml = docx.read('word/document.xml').decode('utf-8')
         self.assertIn('Computed 1450.0', document_xml)
 
+        broken_statement = ContractManifest(name='broken-statement')
+        broken_statement.content = '{% if contract_number %}'
+        broken_statement.save()
+        with self.assertRaisesRegex(
+                UserError,
+                'invalid Jinja syntax in Contract Manifest "broken-statement" / content'):
+            broken_statement.click('validate_jinja')
+
         wizard = Wizard('contract.generate', [vars.contract])
         wizard.form.lessor_company = vars.lessor
         wizard.form.lessor_contact = vars.lessor
         wizard.form.contract_base = vars.contract_base
-        wizard.form.statements[0].content = '{{ contract.lines[1].asset * 1.0 }}'
+        wizard.form.statements[0].content = '{% if deposit_value > 0 %}Deposit{% endif %}'
         with self.assertRaisesRegex(
-                UserError, 'invalid Jinja expression: TypeError:'):
+                UserError,
+                'invalid Jinja expression in Statement "internal-statement" / content: TypeError:'):
             wizard.execute('generate')
