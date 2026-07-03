@@ -582,6 +582,10 @@ msgctxt "model:ir.model.button,string:contract_party_validate_jinja_button"
 msgid "Validate Jinja"
 msgstr "Validar Jinja"
 
+msgctxt "model:ir.model.button,string:contract_sync_document_attributes_to_assets_button"
+msgid "Sync To Assets"
+msgstr "Sincronizar con activos"
+
 msgctxt "model:ir.action,name:act_contract_appearance"
 msgid "Appearances Texts"
 msgstr "Textos de intervenciones"
@@ -646,6 +650,14 @@ msgctxt "model:ir.message,text:msg_single_contract"
 msgid "You can only generate one contract document at a time."
 msgstr "Solo se puede generar un documento de contrato cada vez."
 
+msgctxt "model:ir.message,text:msg_contract_multiple_assets_warning"
+msgid "The selected contracts are related to more than one asset (%(contracts)s). The contract will be updated, but no asset will be synchronized automatically. If you want to copy the document attributes to all related assets, use the manual synchronization button."
+msgstr "Los contratos seleccionados están relacionados con más de un activo (%(contracts)s). El contrato se actualizará, pero no se sincronizará ningún activo automáticamente. Si quieres copiar los atributos del documento a todos los activos relacionados, usa el botón de sincronización manual."
+
+msgctxt "model:ir.message,text:msg_sync_multiple_assets_warning"
+msgid "The selected contracts are related to more than one asset (%(contracts)s). If you continue, the document attributes will be copied to all related assets."
+msgstr "Los contratos seleccionados están relacionados con más de un activo (%(contracts)s). Si continúas, los atributos del documento se copiarán a todos los activos relacionados."
+
 msgctxt "model:ir.ui.menu,name:menu_contract_appearance"
 msgid "Appearances Texts"
 msgstr "Textos de intervenciones"
@@ -677,6 +689,10 @@ msgstr "Atributos"
 msgctxt "view:contract:"
 msgid "Document"
 msgstr "Documento"
+
+msgctxt "view:contract:"
+msgid "Sync To Assets"
+msgstr "Sincronizar con activos"
 
 msgctxt "view:contract:"
 msgid "Lessor"
