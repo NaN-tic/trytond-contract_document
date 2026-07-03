@@ -6,6 +6,11 @@
             <field name="inherit" ref="contract.contract_view_form"/>
             <field name="name">contract_form</field>
         </record>
+        <record model="ir.model.button" id="contract_sync_document_attributes_to_assets_button">
+            <field name="name">sync_document_attributes_to_assets</field>
+            <field name="string">Sync To Assets</field>
+            <field name="model">contract</field>
+        </record>
         <record model="ir.ui.view" id="contract_line_view_list_sequence">
             <field name="model">contract.line</field>
             <field name="inherit" ref="contract.contract_line_view_list_sequence"/>
