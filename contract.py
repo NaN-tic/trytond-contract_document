@@ -177,11 +177,17 @@ class Contract(metaclass=PoolMeta):
             super().write(*args)
             return
         Warning = Pool().get('res.user.warning')
+        to_sync = []
         actions = iter(args)
         for contracts, values in zip(actions, actions):
             if not cls._has_document_attribute_changes(values):
                 continue
-            multiple = [c for c in contracts if len(c.get_related_assets()) > 1]
+            changed_contracts = [c for c in contracts
+                if cls._document_attributes_changed(c, values)]
+            to_sync.extend(changed_contracts)
+            multiple = [c for c in contracts
+                if c in changed_contracts
+                and len(c.get_related_assets()) > 1]
             if not multiple:
                 continue
             key = Warning.format('contract_document_contract_asset_sync',
@@ -191,13 +197,6 @@ class Contract(metaclass=PoolMeta):
                         'contract_document.msg_contract_multiple_assets_warning',
                         contracts=', '.join(c.rec_name for c in multiple)))
         super().write(*args)
-        if Transaction().context.get('skip_contract_document_asset_sync'):
-            return
-        to_sync = []
-        actions = iter(args)
-        for contracts, values in zip(actions, actions):
-            if cls._has_document_attribute_changes(values):
-                to_sync.extend(contracts)
         if to_sync:
             cls._sync_document_attributes_to_assets(
                 cls.browse(list({c.id for c in to_sync})))
@@ -206,6 +205,19 @@ class Contract(metaclass=PoolMeta):
     def _has_document_attribute_changes(cls, values):
         return any(name in values
             for name in ('document_attribute_set', 'document_attributes'))
+
+    @classmethod
+    def _document_attributes_changed(cls, contract, values):
+        if 'document_attribute_set' in values:
+            current_set = (contract.document_attribute_set.id
+                if contract.document_attribute_set else None)
+            if values['document_attribute_set'] != current_set:
+                return True
+        if 'document_attributes' in values:
+            if dict(values['document_attributes'] or {}) != dict(
+                    contract.document_attributes or {}):
+                return True
+        return False
 
     def get_related_assets(self):
         return get_unique_records(

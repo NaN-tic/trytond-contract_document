@@ -49,6 +49,7 @@ class TestSyncAttributes(unittest.TestCase):
                 })
 
         contract = Contract(vars.contract.id)
+        contract.click('draft')
         contract.document_attribute_set = vars.attribute_set
         contract.document_attributes = {'registry': 'CONTRACT-1'}
         contract.save()
