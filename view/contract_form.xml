@@ -14,6 +14,7 @@
                     <label name="document_attribute_set"/>
                     <field name="document_attribute_set"/>
                     <field name="document_attributes" colspan="4"/>
+                    <button name="sync_document_attributes_to_assets" colspan="4"/>
                 </page>
                 <page string="Lessor" id="lessor_document_contacts_page">
                     <field name="lessor_document_contacts" colspan="4"

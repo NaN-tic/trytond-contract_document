@@ -97,10 +97,39 @@ def setup():
     service_product, = service_template.products
 
     Asset = Model.get('asset')
+    AssetAttribute = Model.get('asset.attribute')
+    AssetAttributeSet = Model.get('asset.attribute.set')
+
+    document_attribute = AssetAttribute()
+    document_attribute.name = 'registry'
+    document_attribute.string = 'Registry'
+    document_attribute.type_ = 'char'
+    document_attribute.save()
+
+    document_attribute_floor = AssetAttribute()
+    document_attribute_floor.name = 'floor'
+    document_attribute_floor.string = 'Floor'
+    document_attribute_floor.type_ = 'char'
+    document_attribute_floor.save()
+
+    attribute_set = AssetAttributeSet(name='Document Attributes')
+    attribute_set.attributes.append(document_attribute)
+    attribute_set.attributes.append(document_attribute_floor)
+    attribute_set.save()
+
     asset = Asset()
     asset.name = 'Apartment 1A'
     asset.product = asset_product
+    asset.attribute_set = attribute_set
+    asset.attributes = {'registry': 'ASSET-1'}
     asset.save()
+
+    second_asset = Asset()
+    second_asset.name = 'Apartment 1B'
+    second_asset.product = asset_product
+    second_asset.attribute_set = attribute_set
+    second_asset.attributes = {'floor': '1B'}
+    second_asset.save()
 
     Service = Model.get('contract.service')
     service = Service(name='Monthly Rent', product=service_product)
@@ -214,7 +243,14 @@ def setup():
         customer=customer,
         payment_type=payment_type,
         bank_account=bank_account,
+        payment_term=payment_term,
+        service=service,
+        unit=unit,
+        today=today,
+        attribute_set=attribute_set,
+        document_attribute=document_attribute,
         asset=asset,
+        second_asset=second_asset,
         contract=contract,
         contract_base=contract_base,
         contact_role=contact_role)

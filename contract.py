@@ -20,7 +20,7 @@ from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Bool, Eval
 from trytond.transaction import Transaction
 from trytond.wizard import Button, StateTransition, StateView, Wizard
-from trytond.exceptions import UserError
+from trytond.exceptions import UserError, UserWarning
 
 from .tools import (SafeDict, TemplateRecord, markdown_to_paragraphs,
     safe_text, template_value)
@@ -65,6 +65,21 @@ def render_jinja_source(source, context, location):
         return template.render(**context)
     except (TemplateError, TypeError, ValueError) as exc:
         raise get_jinja_error(location, exc, 'expression')
+
+
+def get_sync_group_key(attribute_set_id, attributes):
+    return (
+        attribute_set_id,
+        tuple(sorted((attributes or {}).items())),
+        )
+
+
+def get_unique_records(records):
+    unique = {}
+    for record in records:
+        if record and record.id:
+            unique[record.id] = record
+    return list(unique.values())
 
 
 class JinjaValidationMixin:
@@ -122,15 +137,146 @@ class Contract(metaclass=PoolMeta):
     lessor_document_contacts = fields.One2Many('contract.document.contact',
         'contract', 'Lessor Persons', domain=[
             ('type', '=', 'lessor'),
+            ], filter=[
+            ('type', '=', 'lessor'),
             ], context={
             'default_type': 'lessor',
             })
     lessee_document_contacts = fields.One2Many('contract.document.contact',
         'contract', 'Lessee Persons', domain=[
             ('type', '=', 'lessee'),
+            ], filter=[
+            ('type', '=', 'lessee'),
             ], context={
             'default_type': 'lessee',
             })
+
+    @classmethod
+    def __setup__(cls):
+        super().__setup__()
+        cls._buttons.update({
+                'sync_document_attributes_to_assets': {},
+                })
+
+    @classmethod
+    def create(cls, vlist):
+        contracts = super().create(vlist)
+        if Transaction().context.get('skip_contract_document_asset_sync'):
+            return contracts
+        to_sync = []
+        for contract, values in zip(contracts, vlist):
+            if cls._has_document_attribute_changes(values):
+                to_sync.append(contract)
+        if to_sync:
+            cls._sync_document_attributes_to_assets(to_sync)
+        return contracts
+
+    @classmethod
+    def write(cls, *args):
+        if Transaction().context.get('skip_contract_document_asset_sync'):
+            super().write(*args)
+            return
+        Warning = Pool().get('res.user.warning')
+        actions = iter(args)
+        for contracts, values in zip(actions, actions):
+            if not cls._has_document_attribute_changes(values):
+                continue
+            multiple = [c for c in contracts if len(c.get_related_assets()) > 1]
+            if not multiple:
+                continue
+            key = Warning.format('contract_document_contract_asset_sync',
+                multiple)
+            if Warning.check(key):
+                raise UserWarning(key, gettext(
+                        'contract_document.msg_contract_multiple_assets_warning',
+                        contracts=', '.join(c.rec_name for c in multiple)))
+        super().write(*args)
+        if Transaction().context.get('skip_contract_document_asset_sync'):
+            return
+        to_sync = []
+        actions = iter(args)
+        for contracts, values in zip(actions, actions):
+            if cls._has_document_attribute_changes(values):
+                to_sync.extend(contracts)
+        if to_sync:
+            cls._sync_document_attributes_to_assets(
+                cls.browse(list({c.id for c in to_sync})))
+
+    @classmethod
+    def _has_document_attribute_changes(cls, values):
+        return any(name in values
+            for name in ('document_attribute_set', 'document_attributes'))
+
+    def get_related_assets(self):
+        return get_unique_records(
+            line.asset for line in self.lines if getattr(line, 'asset', None))
+
+    def set_document_attributes_from_asset_if_empty(self, asset):
+        if not asset:
+            return
+        if (not self.document_attribute_set
+                and getattr(asset, 'attribute_set', None)):
+            self.document_attribute_set = asset.attribute_set
+        if (not self.document_attributes
+                and getattr(asset, 'attributes', None)):
+            self.document_attributes = dict(asset.attributes)
+
+    @fields.depends('lines', 'document_attribute_set', 'document_attributes')
+    def on_change_lines(self):
+        if self.document_attribute_set or self.document_attributes:
+            return
+        for line in self.lines or []:
+            if getattr(line, 'asset', None):
+                self.set_document_attributes_from_asset_if_empty(line.asset)
+                if self.document_attribute_set or self.document_attributes:
+                    break
+
+    @classmethod
+    def _get_asset_sync_values(cls, contract):
+        return {
+            'attribute_set': (contract.document_attribute_set.id
+                if contract.document_attribute_set else None),
+            'attributes': dict(contract.document_attributes or {}),
+            }
+
+    @classmethod
+    def _sync_document_attributes_to_assets(cls, contracts, force=False):
+        Asset = Pool().get('asset')
+        grouped_assets = {}
+        for contract in contracts:
+            assets = contract.get_related_assets()
+            if not assets:
+                continue
+            if len(assets) > 1 and not force:
+                continue
+            values = cls._get_asset_sync_values(contract)
+            key = get_sync_group_key(values['attribute_set'],
+                values['attributes'])
+            grouped_assets.setdefault(key, {
+                    'values': values,
+                    'assets': set(),
+                    })
+            grouped_assets[key]['assets'].update(asset.id for asset in assets)
+        if not grouped_assets:
+            return
+        with Transaction().set_context(skip_asset_attribute_sync=True):
+            for data in grouped_assets.values():
+                Asset.write(list(Asset.browse(list(data['assets']))),
+                    data['values'])
+
+    @classmethod
+    @ModelView.button
+    def sync_document_attributes_to_assets(cls, contracts):
+        Warning = Pool().get('res.user.warning')
+        multiple = [c for c in contracts if len(c.get_related_assets()) > 1]
+        if multiple:
+            key = Warning.format('contract_document_sync_assets',
+                multiple)
+            if Warning.check(key):
+                raise UserWarning(key, gettext(
+                        'contract_document.msg_sync_multiple_assets_warning',
+                        contracts=', '.join(c.rec_name for c in multiple)))
+        cls._sync_document_attributes_to_assets(contracts, force=True)
 
 
 class ContractContactRole(ModelSQL, ModelView):
@@ -180,6 +326,14 @@ class ContractContact(sequence_ordered(), ModelSQL, ModelView):
     @staticmethod
     def default_type():
         return Transaction().context.get('default_type')
+
+    @classmethod
+    def create(cls, vlist):
+        default_type = Transaction().context.get('default_type')
+        if default_type:
+            vlist = [dict(values, type=values.get('type') or default_type)
+                for values in vlist]
+        return super().create(vlist)
 
     def get_rec_name(self, name):
         return self.name
@@ -452,7 +606,7 @@ class ContractGenerateContact(ModelView):
     type = fields.Selection([
             ('lessor', 'Lessor'),
             ('lessee', 'Lessee'),
-            ], 'Type')
+            ], 'Type', required=True)
     name = fields.Char('Full Name', required=True)
     identifier = fields.Char('Identifier')
     address = fields.Text('Address')
@@ -496,7 +650,8 @@ class ContractGenerateStart(ModelView):
             }, depends=['company'])
     lessor_document_contacts = fields.One2Many(
         'contract.generate.start.contact', None, 'Lessor Persons',
-        domain=[('type', '=', 'lessor')], context={
+        domain=[('type', '=', 'lessor')],
+        filter=[('type', '=', 'lessor')], context={
             'default_type': 'lessor',
             })
     payment_type = fields.Many2One('account.payment.type', 'Payment Type',
@@ -514,7 +669,8 @@ class ContractGenerateStart(ModelView):
             }, depends=['company'])
     lessee_document_contacts = fields.One2Many(
         'contract.generate.start.contact', None, 'Lessee Persons',
-        domain=[('type', '=', 'lessee')], context={
+        domain=[('type', '=', 'lessee')],
+        filter=[('type', '=', 'lessee')], context={
             'default_type': 'lessee',
             })
     start_date = fields.Date('Start Date')

@@ -1,5 +1,6 @@
 <tree sequence="sequence" editable="1">
     <field name="sequence"/>
+    <field name="type" tree_invisible="1"/>
     <field name="name"/>
     <field name="acting_as"/>
     <field name="identifier"/>

@@ -34,5 +34,11 @@
         <record model="ir.message" id="msg_default_clauses_title">
             <field name="text">CLAUSES</field>
         </record>
+        <record model="ir.message" id="msg_sync_multiple_assets_warning">
+            <field name="text">The selected contracts are related to more than one asset (%(contracts)s). If you continue, the document attributes will be copied to all related assets.</field>
+        </record>
+        <record model="ir.message" id="msg_contract_multiple_assets_warning">
+            <field name="text">The selected contracts are related to more than one asset (%(contracts)s). The contract will be updated, but no asset will be synchronized automatically. If you want to copy the document attributes to all related assets, use the manual synchronization button.</field>
+        </record>
     </data>
 </tryton>

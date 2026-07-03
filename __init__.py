@@ -2,12 +2,14 @@
 # the full copyright notices and license terms.
 from trytond.pool import Pool
 
+from . import asset
 from . import contract
 
 
 def register():
     Pool.register(
         contract.Contract,
+        asset.Asset,
         contract.ContractContactRole,
         contract.ContractLineType,
         contract.ContractLine,
