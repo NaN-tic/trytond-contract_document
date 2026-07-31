@@ -220,6 +220,7 @@ def setup():
     line.unit = unit
     line.start_date = today
     line.end_date = datetime.date(2016, 1, 1)
+    line.contract_end_date = datetime.date(2016, 1, 1)
     discount_line = contract.lines.new()
     discount_line.service = service
     discount_line.unit_price = Decimal('50')
@@ -227,6 +228,7 @@ def setup():
     discount_line.unit = unit
     discount_line.start_date = today
     discount_line.end_date = datetime.date(2016, 1, 1)
+    discount_line.contract_end_date = datetime.date(2016, 1, 1)
     ended_line = contract.lines.new()
     ended_line.service = service
     ended_line.unit_price = Decimal('100')
@@ -234,6 +236,7 @@ def setup():
     ended_line.unit = unit
     ended_line.start_date = today
     ended_line.end_date = today
+    ended_line.contract_end_date = today
     contract.save()
     contract.click('confirm')
 

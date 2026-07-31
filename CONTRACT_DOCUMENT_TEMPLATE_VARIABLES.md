@@ -84,6 +84,7 @@ These variables are already converted to plain text and can be printed directly.
 - `lessee_document_contacts_text`
 - `start_date_text`
 - `end_date_text`
+- `contract_end_date_text`
 - `contract_years_text`
 - `asset_name`
 - `asset_address`
@@ -107,6 +108,7 @@ These variables keep their original value type where possible.
 
 - `start_date`
 - `end_date`
+- `contract_end_date`
 - `contract_years`
 - `deposit_value`
 - `guarantee_amount_value`

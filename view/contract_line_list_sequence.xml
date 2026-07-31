@@ -3,4 +3,7 @@
     <xpath expr="/tree/field[@name='service']" position="after">
         <field name="line_type"/>
     </xpath>
+    <xpath expr="/tree/field[@name='end_date']" position="before">
+        <field name="contract_end_date"/>
+    </xpath>
 </data>
