@@ -34,9 +34,31 @@ msgctxt "field:contract,lessee_document_contacts:"
 msgid "Lessee Persons"
 msgstr "Persones arrendatàries"
 
+msgctxt "field:contract,contract_end_date:"
+msgid "Contract End Date"
+msgstr "Data finalització contracte"
+
 msgctxt "field:contract.line,line_type:"
 msgid "Line Type"
 msgstr "Tipus de línia"
+
+msgctxt "field:contract.line,contract_end_date:"
+msgid "Contract End Date"
+msgstr "Data finalització contracte"
+
+msgctxt "help:contract.line,contract_end_date:"
+msgid ""
+"Date when the contract ends. This does not mean billing stops, as contracts "
+"may be automatically renewed unless terminated by either party."
+msgstr "Data en què acaba el contracte. Això no vol dir que es deixi de facturar, ja que els contractes es poden prorrogar automàticament si cap de les parts diu res."
+
+msgctxt "help:contract.line,end_date:"
+msgid ""
+"Date when billing ends for this contract line. This is different from the "
+"contract end date, which indicates when the contract itself ends."
+msgstr ""
+"Data en què s'acaba la facturació d'aquesta línia de contracte. És diferent "
+"de la data de finalització del contracte, que indica quan acaba el contracte."
 
 msgctxt "field:contract.line.type,name:"
 msgid "Name"
@@ -341,6 +363,16 @@ msgstr "Títol de manifestacions"
 msgctxt "field:contract.generate.start,end_date:"
 msgid "End Date"
 msgstr "Data de fi"
+
+msgctxt "field:contract.generate.start,contract_end_date:"
+msgid "Contract End Date"
+msgstr "Data finalització contracte"
+
+msgctxt "help:contract.generate.start,contract_end_date:"
+msgid ""
+"Date when the contract ends. This does not mean billing stops, as contracts "
+"may be automatically renewed unless terminated by either party."
+msgstr "Data en què acaba el contracte. Això no vol dir que es deixi de facturar, ja que els contractes es poden prorrogar automàticament si cap de les parts diu res."
 
 msgctxt "field:contract.generate.start,energy_certificate:"
 msgid "Energy Certificate"

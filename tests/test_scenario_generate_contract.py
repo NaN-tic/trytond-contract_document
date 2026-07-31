@@ -31,7 +31,7 @@ class TestGenerateContract(unittest.TestCase):
         self.assertEqual(wizard.form.bank_account, vars.bank_account)
         self.assertEqual(wizard.form.asset, vars.asset)
         self.assertEqual(wizard.form.start_date.isoformat(), '2015-01-01')
-        self.assertEqual(wizard.form.end_date.isoformat(), '2016-01-01')
+        self.assertEqual(wizard.form.contract_end_date.isoformat(), '2016-01-01')
         self.assertEqual(wizard.form.contract_years, Decimal('1.00'))
         self.assertEqual(wizard.form.amount, Decimal('1450.00'))
         default_contract_title = wizard.form.contract_title
