@@ -10,8 +10,8 @@
             <newline/>
             <label name="start_date"/>
             <field name="start_date"/>
-            <label name="end_date"/>
-            <field name="end_date"/>
+            <label name="contract_end_date"/>
+            <field name="contract_end_date"/>
             <label name="contract_years"/>
             <field name="contract_years"/>
             <newline/>

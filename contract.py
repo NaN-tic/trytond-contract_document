@@ -4,6 +4,7 @@ from decimal import ROUND_HALF_UP
 from decimal import Decimal
 from io import BytesIO
 from datetime import datetime
+from datetime import date
 import os
 import shutil
 import subprocess
@@ -13,11 +14,13 @@ from xml.sax.saxutils import escape
 
 from jinja2 import ChainableUndefined, Environment
 from jinja2.exceptions import TemplateError
+from sql.aggregate import Max
 from trytond.i18n import gettext
 from trytond.model import (
     ModelSQL, ModelView, fields, sequence_ordered, tree)
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Bool, Eval
+from trytond.tools import grouped_slice, reduce_ids
 from trytond.transaction import Transaction
 from trytond.wizard import Button, StateTransition, StateView, Wizard
 from trytond.exceptions import UserError, UserWarning
@@ -150,6 +153,28 @@ class Contract(metaclass=PoolMeta):
             ], context={
             'default_type': 'lessee',
             })
+    contract_end_date = fields.Function(fields.Date('Contract End Date'),
+        'get_contract_end_date')
+
+    @classmethod
+    def get_contract_end_date(cls, contracts, name):
+        pool = Pool()
+        ContractLine = pool.get('contract.line')
+        cursor = Transaction().connection.cursor()
+        line = ContractLine.__table__()
+        result = {}
+        contract_ids = [c.id for c in contracts]
+        for sub_ids in grouped_slice(contract_ids):
+            where = reduce_ids(line.contract, sub_ids)
+            cursor.execute(*line.select(line.contract,
+                    Max(line.contract_end_date),
+                    where=where,
+                    group_by=line.contract))
+            for contract_id, value in cursor.fetchall():
+                if isinstance(value, str):
+                    value = date(*[int(x) for x in value.split('-')])
+                result[contract_id] = value
+        return {c.id: result.get(c.id) for c in contracts}
 
     @classmethod
     def __setup__(cls):
@@ -315,6 +340,17 @@ class ContractLine(metaclass=PoolMeta):
     __name__ = 'contract.line'
 
     line_type = fields.Many2One('contract.line.type', 'Line Type')
+    contract_end_date = fields.Date('Contract End Date',
+        help='Date when the contract ends. This does not mean billing stops, '
+        'as contracts may be automatically renewed unless terminated by either party.')
+
+    @classmethod
+    def __setup__(cls):
+        super().__setup__()
+        cls.end_date.help = (
+            'Date when billing ends for this contract line. '
+            'This is different from the contract end date, '
+            'which indicates when the contract itself ends.')
 
 
 class ContractContact(sequence_ordered(), ModelSQL, ModelView):
@@ -687,6 +723,9 @@ class ContractGenerateStart(ModelView):
             })
     start_date = fields.Date('Start Date')
     end_date = fields.Date('End Date')
+    contract_end_date = fields.Date('Contract End Date',
+        help='Date when the contract ends. This does not mean billing stops, '
+        'as contracts may be automatically renewed unless terminated by either party.')
     contract_years = fields.Function(fields.Numeric('Contract Years',
             digits=(16, 2)), 'on_change_with_contract_years')
     asset = fields.Many2One('asset', 'Asset', context={
@@ -815,11 +854,11 @@ class ContractGenerateStart(ModelView):
         if not self.attributes and getattr(self.asset, 'attributes', None):
             self.attributes = dict(self.asset.attributes)
 
-    @fields.depends('start_date', 'end_date')
+    @fields.depends('start_date', 'contract_end_date')
     def on_change_with_contract_years(self, name=None):
-        if not self.start_date or not self.end_date:
+        if not self.start_date or not self.contract_end_date:
             return None
-        days = (self.end_date - self.start_date).days
+        days = (self.contract_end_date - self.start_date).days
         if days <= 0:
             return Decimal('0.00')
         years = Decimal(days) / Decimal('365')
@@ -874,6 +913,7 @@ class ContractGenerateWizard(Wizard):
                 contract, 'lessee'),
             'start_date': contract.start_date,
             'end_date': getattr(contract, 'end_date', None),
+            'contract_end_date': getattr(contract, 'contract_end_date', None),
             'asset': asset.id if asset else None,
             'deposit': getattr(contract, 'deposit', None),
             'guarantee_amount': getattr(contract, 'guarantee_amount', None),
@@ -1139,6 +1179,8 @@ class ContractGenerateWizard(Wizard):
                 'start_date_text': safe_text(self.start.start_date),
                 'end_date': self.start.end_date,
                 'end_date_text': safe_text(self.start.end_date),
+                'contract_end_date': self.start.contract_end_date,
+                'contract_end_date_text': safe_text(self.start.contract_end_date),
                 'contract_years': template_value(self.start.contract_years),
                 'contract_years_text': safe_text(self.start.contract_years),
                 'asset': TemplateRecord(asset) if asset else '',

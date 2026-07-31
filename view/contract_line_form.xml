@@ -4,4 +4,8 @@
         <label name="line_type"/>
         <field name="line_type"/>
     </xpath>
+    <xpath expr="/form/label[@name='end_date']" position="before">
+        <label name="contract_end_date"/>
+        <field name="contract_end_date"/>
+    </xpath>
 </data>
